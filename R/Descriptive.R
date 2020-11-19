@@ -4,7 +4,7 @@
 #'
 #' For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
 #'
-#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affintiy.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
+#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
 #' @param path A string indicating the path where to save the txt file. Defaults to current path.
 #' @param name A string indicating the name of the txt file. Defaults to \code{"affinity_matrix"}.
 #' @param labels_x A vector of strings indicating the names of men's matching variables. Defaults to \code{"Trait k"} for every \code{k} matching variable.
@@ -67,7 +67,7 @@ show.affinity.matrix = function(res,
 #'
 #' For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
 #'
-#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affintiy.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
+#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
 #' @param path A string indicating the path where to save the txt file. Defaults to current path.
 #' @param name A string indicating the name of the txt file. Defaults to \code{"diagonal_affinity_matrix"}.
 #' @param labels A vector of strings indicating the names of the matching variables. Defaults to \code{"Trait k"} for every \code{k} matching variable.
@@ -125,7 +125,7 @@ show.diagonal = function(res,
 #'
 #' For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
 #'
-#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affintiy.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
+#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
 #' @param path A string indicating the path where to save the txt file. Defaults to current path.
 #' @param name A string indicating the name of the txt file. Defaults to \code{"rank_tests"}.
 #' @param pr A probability indicating the significance level required to pass a rank test. Defaults to 0.05.
@@ -186,7 +186,7 @@ show.test = function(res,
 #'
 #' For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
 #'
-#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affintiy.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
+#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
 #' @param path A string indicating the path where to save the txt file. Defaults to current path.
 #' @param name_x A string indicating the name of the txt file storing the results for men. Defaults to \code{"saliency_analysis_x"}.
 #' @param name_y A string indicating the name of the txt file storing the results for women. Defaults to \code{"saliency_analysis_y"}.
@@ -290,7 +290,7 @@ show.saliency = function(res,
 #'
 #' For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
 #'
-#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affintiy.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
+#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
 #' @param path A string indicating the path where to save the plot. Defaults to current path.
 #' @param name A string indicating the name of the plot. Defaults to \code{"affinity_matrix"}.
 #'
@@ -316,7 +316,7 @@ show.cross.validation = function(res,
 #'
 #' For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
 #'
-#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affintiy.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
+#' @param res A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.
 #' @param Z A matrix Z with additional variables that were not previously used in the estimation. The i-th row of \code{Z} must contain information on the couple formed by the i-th row of \code{X} and the i-th row of \code{Y}, so that \code{nrow(Z)=nrow(X)}. Defaults to an empty matrix: \code{Z} is optional.
 #' @param path A string indicating the path where to save the plots. Defaults to current path.
 #' @param name A string indicating a common root for plot names. Defaults to \code{"correlation_plot"}.
