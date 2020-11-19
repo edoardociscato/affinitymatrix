@@ -7,7 +7,7 @@
 show.cross.validation(res, path = getwd(), name = "cross_validation_plot")
 }
 \arguments{
-\item{res}{A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affintiy.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.}
+\item{res}{A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.}
 
 \item{path}{A string indicating the path where to save the plot. Defaults to current path.}
 

@@ -22,7 +22,7 @@ show.correlations(
 )
 }
 \arguments{
-\item{res}{A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affintiy.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.}
+\item{res}{A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.}
 
 \item{Z}{A matrix Z with additional variables that were not previously used in the estimation. The i-th row of \code{Z} must contain information on the couple formed by the i-th row of \code{X} and the i-th row of \code{Y}, so that \code{nrow(Z)=nrow(X)}. Defaults to an empty matrix: \code{Z} is optional.}
 
@@ -61,7 +61,7 @@ For the sake of clarity, we refer to "men" as the observations on one side of th
 }
 \seealso{
 \strong{Chiappori, Pierre-André, Edoardo Ciscato, and Carla
-Guerriero}. Analyzing matching patterns in marriage: theory and
-application to Italian data. \emph{HCEO Working Paper} no. 2020-080
+Guerriero}. "Analyzing matching patterns in marriage: theory and
+application to Italian data." \emph{HCEO Working Paper} no. 2020-080
 (2020).
 }
