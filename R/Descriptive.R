@@ -14,7 +14,7 @@
 #' @return The function saves a txt file in tex style in \code{path}.
 #'
 #' @export
-print.affinity.matrix = function(res,
+show.affinity.matrix = function(res,
                                  path = getwd(),
                                  name = "affinity_matrix",
                                  labels_x = paste0("Trait ",1:Kx),
@@ -76,7 +76,7 @@ print.affinity.matrix = function(res,
 #' @return The function saves a txt file in tex style in \code{path}.
 #'
 #' @export
-print.diagonal = function(res,
+show.diagonal = function(res,
                           path = getwd(),
                           name = "diagonal_affinity_matrix",
                           labels = paste0("Trait ",1:K),
@@ -129,12 +129,12 @@ print.diagonal = function(res,
 #' @param path A string indicating the path where to save the txt file. Defaults to current path.
 #' @param name A string indicating the name of the txt file. Defaults to \code{"rank_tests"}.
 #' @param pr A probability indicating the significance level required to pass a rank test. Defaults to 0.05.
-#' @param n_tests An integer indicating the number of tests to print. The function prints the first \code{n_tests} rank tests. Defaults to \code{min(nrow(Y),nrow(X))-1}.
+#' @param n_tests An integer indicating the number of tests to show. The function prints the first \code{n_tests} rank tests. Defaults to \code{min(nrow(Y),nrow(X))-1}.
 #'
 #' @return The function saves a txt file in tex style in \code{path}.
 #'
 #' @export
-print.test = function(res,
+show.test = function(res,
                       path = getwd(),
                       name = "rank_tests",
                       pr = .05,
@@ -199,7 +199,7 @@ print.test = function(res,
 #' @return The function saves a txt file in tex style in \code{path}.
 #'
 #' @export
-print.saliency = function(res,
+show.saliency = function(res,
                           path = getwd(),
                           name_x = "saliency_analysis_x",
                           name_y = "saliency_analysis_y",
@@ -297,7 +297,7 @@ print.saliency = function(res,
 #' @return The function saves a png file in \code{path}.
 #'
 #' @export
-print.CV = function(res,
+show.cross.validation = function(res,
                     path = getwd(),
                     name = "cross_validation_plot") {
 
@@ -333,8 +333,13 @@ print.CV = function(res,
 #'
 #' @return The function saves one separate png file for each of the \code{ndims} dimensions in \code{path}.
 #'
+#' @seealso \strong{Chiappori, Pierre-André, Edoardo Ciscato, and Carla
+#'     Guerriero}. "Analyzing matching patterns in marriage: theory and
+#'     application to Italian data." \emph{HCEO Working Paper} no. 2020-080
+#'     (2020).
+#'
 #' @export
-print.correlations = function(res,
+show.correlations = function(res,
                               Z = matrix(0, nrow = N, ncol = 0),
                               path = getwd(),
                               name = "correlation_plot",

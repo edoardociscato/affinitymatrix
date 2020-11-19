@@ -19,7 +19,7 @@
 #'   must be equal to \code{nrow(Y)}. Its columns correspond to the different
 #'   matching variables: \code{ncol(X)} can be different from \code{ncol(Y)}.
 #'   For the sake of clarity of exposition when using descriptive tools such as
-#'   \code{\link{print.correlations}}, it is recommended assigning the same
+#'   \code{\link{show.correlations}}, it is recommended assigning the same
 #'   matching variable to the k-th column of \code{X} and to the k-th column of
 #'   \code{Y}, whenever possible. If \code{X} has more matching variables than
 #'   \code{Y}, then those variables that appear in \code{X} but no in {Y} should
@@ -124,12 +124,12 @@
 #' res = estimate.affinity.matrix.lowrank(X, Y, w = w, tol_level = 1e-03, nB = 100, Nfolds = 3)
 #'
 #' # Summarize results
-#' print.affinity.matrix(res, labels_x = labels_x, labels_y = labels_y)
-#' print.diagonal(res, labels = labels_x)
-#' print.test(res)
-#' print.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
-#' print.CV(res)
-#' print.correlations(res, labels_x = labels_x, labels_y = labels_y, label_x_axis = "Husband", label_y_axis = "Wife", ndims = 2)
+#' show.affinity.matrix(res, labels_x = labels_x, labels_y = labels_y)
+#' show.diagonal(res, labels = labels_x)
+#' show.test(res)
+#' show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
+#' show.cross.validation(res)
+#' show.correlations(res, labels_x = labels_x, labels_y = labels_y, label_x_axis = "Husband", label_y_axis = "Wife", ndims = 2)
 #'
 #' @export
 estimate.affinity.matrix.lowrank <- function(X,

@@ -129,11 +129,11 @@ w = sort(runif(N-1)); w = c(w,1) - c(0,w) # sample weights
 res = estimate.affinity.matrix.unipartite(X, Y, w = w, nB = 500)
 
 # Summarize results
-print.affinity.matrix(res, labels_x = labels, labels_y = labels)
-print.diagonal(res, labels = labels)
-print.test(res)
-print.saliency(res, labels_x = labels, labels_y = labels, ncol_x = 2, ncol_y = 2)
-print.correlations(res, labels_x = labels, labels_y = labels, label_x_axis = "First partner", label_y_axis = "Second partner", ndims = 2)
+show.affinity.matrix(res, labels_x = labels, labels_y = labels)
+show.diagonal(res, labels = labels)
+show.test(res)
+show.saliency(res, labels_x = labels, labels_y = labels, ncol_x = 2, ncol_y = 2)
+show.correlations(res, labels_x = labels, labels_y = labels, label_x_axis = "First partner", label_y_axis = "Second partner", ndims = 2)
 
 }
 \seealso{
