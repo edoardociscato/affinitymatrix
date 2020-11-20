@@ -77,21 +77,28 @@
 #'   replications and used to infer the empirical distribution of the estimated
 #'   objects.
 #'
-#' @seealso \strong{Ciscato, Edoardo, Alfred Galichon, and Marion Gousse}.
-#'     "Like attract like? a structural comparison of homogamy across same-sex
-#'     and different-sex households." \emph{Journal of Political Economy} 128,
-#'     no. 2 (2020): 740-781. \strong{Dupuy, Arnaud, and Alfred Galichon}.
-#'     "Personality traits and the marriage market." \emph{Journal of Political
-#'     Economy} 122, no. 6 (2014): 1271-1319.
+#' @seealso \strong{Ciscato, Edoardo, Alfred Galichon, and Marion Gousse}. "Like
+#'   attract like? a structural comparison of homogamy across same-sex and
+#'   different-sex households." \emph{Journal of Political Economy} 128, no. 2
+#'   (2020): 740-781. \strong{Dupuy, Arnaud, and Alfred Galichon}. "Personality
+#'   traits and the marriage market." \emph{Journal of Political Economy} 122,
+#'   no. 6 (2014): 1271-1319.
 #'
 #' @examples
 #'
 #' # Parameters
 #' K = 4 # number of matching variables
-#' N = 500 # sample size
+#' N = 200 # sample size
 #' mu = rep(0, 2*K) # means of the data generating process
-#' Sigma = matrix(c(1, -0.0992, 0.0443, -0.0246, -0.8145, 0.083, -0.0438, 0.0357, -0.0992, 1, 0.0699, -0.0043, 0.083, 0.8463, 0.0699, -0.0129, 0.0443, 0.0699, 1, -0.0434, -0.0438, 0.0699, 0.5127, -0.0383, -0.0246, -0.0043, -0.0434, 1, 0.0357, -0.0129, -0.0383, 0.6259, -0.8145, 0.083, -0.0438, 0.0357, 1, -0.0992, 0.0443, -0.0246, 0.083, 0.8463, 0.0699, -0.0129, -0.0992, 1, 0.0699, -0.0043, -0.0438, 0.0699, 0.5127, -0.0383, 0.0443, 0.0699, 1, -0.0434, 0.0357, -0.0129, -0.0383, 0.6259, -0.0246, -0.0043, -0.0434, 1),
-#'                nrow=Kx+Ky) # (normalized) variance-covariance matrix of the data generating process with a block symmetric structure
+#' Sigma = matrix(c(1, -0.0992, 0.0443, -0.0246, -0.8145, 0.083, -0.0438,
+#'     0.0357, -0.0992, 1, 0.0699, -0.0043, 0.083, 0.8463, 0.0699, -0.0129, 0.0443,
+#'     0.0699, 1, -0.0434, -0.0438, 0.0699, 0.5127, -0.0383, -0.0246, -0.0043,
+#'     -0.0434, 1, 0.0357, -0.0129, -0.0383, 0.6259, -0.8145, 0.083, -0.0438,
+#'     0.0357, 1, -0.0992, 0.0443, -0.0246, 0.083, 0.8463, 0.0699, -0.0129, -0.0992,
+#'     1, 0.0699, -0.0043, -0.0438, 0.0699, 0.5127, -0.0383, 0.0443, 0.0699, 1,
+#'     -0.0434, 0.0357, -0.0129, -0.0383, 0.6259, -0.0246, -0.0043, -0.0434, 1),
+#'                nrow=K+K) # (normalized) variance-covariance matrix of the
+#'                # data generating process with a block symmetric structure
 #' labels = c("Sex", "Age", "Educ.", "Black") # labels for matching variables
 #'
 #' # Sample
@@ -106,8 +113,11 @@
 #' show.affinity.matrix(res, labels_x = labels, labels_y = labels)
 #' show.diagonal(res, labels = labels)
 #' show.test(res)
-#' show.saliency(res, labels_x = labels, labels_y = labels, ncol_x = 2, ncol_y = 2)
-#' show.correlations(res, labels_x = labels, labels_y = labels, label_x_axis = "First partner", label_y_axis = "Second partner", ndims = 2)
+#' show.saliency(res, labels_x = labels, labels_y = labels,
+#'               ncol_x = 2, ncol_y = 2)
+#' show.correlations(res, labels_x = labels, labels_y = labels,
+#'                   label_x_axis = "First partner",
+#'                   label_y_axis = "Second partner", ndims = 2)
 #'
 #' @export
 estimate.affinity.matrix.unipartite <- function(X,
@@ -147,15 +157,18 @@ estimate.affinity.matrix.unipartite <- function(X,
   # Optimization problem
   if (verbose) message("Main estimation...")
   sol = stats::optim(c(A0),
-                     function(A) objective(A, X1, X2, fx1, fx2, sigma_hat, scale = scale),
-                     gr = function(A) gradient(A, X1, X2, fx1, fx2, sigma_hat, scale = scale),
+                     function(A) objective(A, X1, X2, fx1, fx2, sigma_hat,
+                                           scale = scale),
+                     gr = function(A) gradient(A, X1, X2, fx1, fx2, sigma_hat,
+                                               scale = scale),
                      hessian = TRUE, method = "L-BFGS-B",
                      lower = c(lb), upper = c(ub),
                      control = list("maxit" = max_iter, factr = tol_level))
   #print(sol$message)
   Aopt = matrix(sol$par, nrow = K, ncol = K)/scale
   InvFish = solve(sol$hessian)
-  VarCov = InvFish/N/scale # export it for tests (N is the number of real observations, not the number of rows of X1)
+  VarCov = InvFish/N/scale # export it for tests
+  # NB: N is the number of real observations, not the number of rows of X1)
   sdA  = matrix(sqrt(diag(VarCov)), nrow = K, ncol = K)
   tA = Aopt/sdA
 
@@ -163,8 +176,8 @@ estimate.affinity.matrix.unipartite <- function(X,
   if (verbose) message("Saliency analysis...")
   saliency = svd(Aopt, nu=K, nv=K)
   lambda = saliency$d[1:K]
-  U = saliency$u[,1:K] # U/scaleX gives weights for unscaled data (possibly easier to interpret)
-  V = saliency$v[,1:K] # U and V are the same, up to some computational approximation
+  U = saliency$u[,1:K] # U/scaleX gives weights for unscaled data
+  V = saliency$v[,1:K] # U and V are the same, up to some computational approx.
 
   # Test rank
   if (verbose) message("Rank tests...")
@@ -182,30 +195,36 @@ estimate.affinity.matrix.unipartite <- function(X,
     A_b = matrix(MASS::mvrnorm(n = 1, c(Aopt), VarCov), nrow = K, ncol = K)
     saliency_b = svd(A_b)
     d_b = saliency_b$d
-    U_b = saliency_b$u # U/scaleX gives weights for unscaled data (maybe easier to interpret)
+    U_b = saliency_b$u # U/scaleX gives weights for unscaled data
     V_b = saliency_b$v
     omega_b = rbind(U_b, V_b)
     saliency_rotation = svd(t(omega_b)%*%omega_0)
     Q = saliency_rotation$u%*%t(saliency_rotation$v)
     df.bootstrap[i,] = c(c(A_b), c(d_b), c(U_b%*%Q), c(V_b%*%Q))
   }
-  #VarCov_b = matrix(0, nrow=K*K, ncol=K*K)
+  #VarCov_b = matrix(0, nrow=K*K, ncol=K*K)  # can be computed just as a check
   #for (k in 1:(K*K))
   #  for (l in 1:(K*K)) {
-  #    VarCov_b[k,l] = sum((df.bootstrap[,k] - mean(df.bootstrap[,k]))*(df.bootstrap[,l] - mean(df.bootstrap[,l])))/(B-1)
+  #    VarCov_b[k,l] = sum((df.bootstrap[,k] - mean(df.bootstrap[,k]))*
+  #                        (df.bootstrap[,l] - mean(df.bootstrap[,l])))/(B-1)
   #  }
   #}
-  #sdA_b  = matrix(sqrt(diag(VarCov_b)), nrow = K, ncol = K) # computed just as a check
+  #sdA_b  = matrix(sqrt(diag(VarCov_b)), nrow = K, ncol = K)
   lambdaCI = matrix(0,nrow=K,ncol=2);
-  for (k in 1:K) lambdaCI[k,] = stats::quantile(df.bootstrap[,K*K+k],c(pr/2, 1-pr/2))
+  for (k in 1:K) lambdaCI[k,] = stats::quantile(df.bootstrap[,K*K+k],
+                                                c(pr/2, 1-pr/2))
   UCI = matrix(0,nrow=K*K,ncol=2);
-  for (k in 1:(K*K)) UCI[k,] = stats::quantile(df.bootstrap[,K*K+K+k],c(pr/2, 1-pr/2))
+  for (k in 1:(K*K)) UCI[k,] = stats::quantile(df.bootstrap[,K*K+K+k],
+                                               c(pr/2, 1-pr/2))
   VCI = matrix(0,nrow=K*K,ncol=2);
-  for (k in 1:(K*K)) VCI[k,] = stats::quantile(df.bootstrap[,K*K+K+K*K+k],c(pr/2, 1-pr/2))
+  for (k in 1:(K*K)) VCI[k,] = stats::quantile(df.bootstrap[,K*K+K+K*K+k],
+                                               c(pr/2, 1-pr/2))
 
-  est_results = list("X" = X1[1:N,], "Y" = X2[1:N,], "fx" = fx1[1:N], "fy" = fx2[1:N],
-                     "Aopt" = Aopt, "sdA" = sdA, "tA" = tA, "VarCovA" = VarCov, "rank.tests" = tests,
-                     "U" = U, "V" = V, "lambda" = lambda, "df.bootstrap" = df.bootstrap, "lambdaCI" = lambdaCI, "UCI" = UCI, "VCI" = VCI)
+  est_results = list("X" = X1[1:N,], "Y" = X2[1:N,], "fx" = fx1[1:N],
+                     "fy" = fx2[1:N], "Aopt" = Aopt, "sdA" = sdA, "tA" = tA,
+                     "VarCovA" = VarCov, "rank.tests" = tests, "U" = U, "V" = V,
+                     "lambda" = lambda, "df.bootstrap" = df.bootstrap,
+                     "lambdaCI" = lambdaCI, "UCI" = UCI, "VCI" = VCI)
 
   return(est_results)
 

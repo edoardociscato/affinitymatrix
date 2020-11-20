@@ -35,9 +35,9 @@ devtools::install_github("edoardociscato/affinitymatrix")
 
 ## Example
 
-The example below shows how to use the main function of the package, `estimate.affinity.matrix`, and how to summarize its findings. We first generate a random sample of *matches*: the values of the variance-covariance matrix used in the data generating process are taken from Chiappori, Ciscato and Guerriero (2020). For the sake of clarity, consider the marriage market example: every row of our data frame corresponds to a couple. The first `Kx` columns correspond to the husbands' characteristics, or *matching variables*, while the last `Ky` columns correspond to the wives'. The key inputs to feed to `estimate.affinity.matrix` are two matrices `X` and `Y` corresponding to the husbands' and wives' traits and sorted so that the i-th man in `X` is married to the i-th woman in `Y`.
+The example below shows how to use the main function of the package, `estimate.affinity.matrix`, and how to summarize its findings. We first generate a random sample of *matches*: the values of the normalized variance-covariance matrix used in the data generating process are taken from Chiappori, Ciscato and Guerriero (2020). For the sake of clarity, consider the marriage market example: every row of our data frame corresponds to a couple. The first `Kx` columns correspond to the husbands' characteristics, or *matching variables*, while the last `Ky` columns correspond to the wives'. The key inputs to feed to `estimate.affinity.matrix` are two matrices `X` and `Y` corresponding to the husbands' and wives' traits and sorted so that the i-th man in `X` is married to the i-th woman in `Y`.
 
-```{r echo=FALSE}
+```{r}
 # Load
 library(affinitymatrix)
 
@@ -62,14 +62,23 @@ res = estimate.affinity.matrix(X, Y, w = w, nB = 500)
 
 The output of `estimate.affinity.matrix` is a list of objects that constitute the estimation results. The estimated affinity matrix is stored under `Aopt`, while the vector of loadings describing men's and women's matching factors are stored under `U` and `V` respectively. The following functions can be used to produce summaries of the different findings. For further details, Chiappori, Ciscato and Guerriero (2020) contain tables and plots that are generated with these functions.
 
-```{r echo=FALSE}
+```{r, results ="asis"}
+# Print affinity matrix with standard errors
 show.affinity.matrix(res, labels_x = labels_x, labels_y = labels_y)
-show.diagonal(res, labels = labels_x)
-show.test(res)
-show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
-show.correlations(res, labels_x = labels_x, labels_y = labels_y, label_x_axis = "Husband", label_y_axis = "Wife", ndims = 2)
-```
 
+# Print diagonal elements of the affinity matrix with standard errors
+show.diagonal(res, labels = labels_x)
+
+# Print rank test summary
+show.test(res)
+
+# Print results from saliency analysis
+show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
+
+# Show correlation between observed variables and matching factors
+plots = show.correlations(res, labels_x = labels_x, labels_y = labels_y,
+                          label_x_axis = "Husband", label_y_axis = "Wife")
+```
 
 ## Literature
 

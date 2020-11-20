@@ -108,10 +108,16 @@
 #'
 #' # Parameters
 #' Kx = 4; Ky = 4; # number of matching variables on both sides of the market
-#' N = 500 # sample size
+#' N = 200 # sample size
 #' mu = rep(0, Kx+Ky) # means of the data generating process
-#' Sigma = matrix(c(1, 0.326, 0.1446, -0.0668, 0.5712, 0.4277, 0.1847, -0.2883, 0.326, 1, -0.0372, 0.0215, 0.2795, 0.8471, 0.1211, -0.0902, 0.1446, -0.0372, 1, -0.0244, 0.2186, 0.0636, 0.1489, -0.1301, -0.0668, 0.0215, -0.0244, 1, 0.0192, 0.0452, -0.0553, 0.2717, 0.5712, 0.2795, 0.2186, 0.0192, 1, 0.3309, 0.1324, -0.1896, 0.4277, 0.8471, 0.0636, 0.0452, 0.3309, 1, 0.0915, -0.1299, 0.1847, 0.1211, 0.1489, -0.0553, 0.1324, 0.0915, 1, -0.1959, -0.2883, -0.0902, -0.1301, 0.2717, -0.1896, -0.1299, -0.1959, 1),
-#'                nrow=Kx+Ky) # (normalized) variance-covariance matrix of the data generating process
+#' Sigma = matrix(c(1, 0.326, 0.1446, -0.0668, 0.5712, 0.4277, 0.1847, -0.2883,
+#'     0.326, 1, -0.0372, 0.0215, 0.2795, 0.8471, 0.1211, -0.0902, 0.1446, -0.0372,
+#'     1, -0.0244, 0.2186, 0.0636, 0.1489, -0.1301, -0.0668, 0.0215, -0.0244, 1,
+#'     0.0192, 0.0452, -0.0553, 0.2717, 0.5712, 0.2795, 0.2186, 0.0192, 1, 0.3309,
+#'     0.1324, -0.1896, 0.4277, 0.8471, 0.0636, 0.0452, 0.3309, 1, 0.0915, -0.1299,
+#'     0.1847, 0.1211, 0.1489, -0.0553, 0.1324, 0.0915, 1, -0.1959, -0.2883,
+#'     -0.0902, -0.1301, 0.2717, -0.1896, -0.1299, -0.1959, 1), nrow=Kx+Ky)
+#'     # (normalized) variance-covariance matrix of the data generating process
 #' labels_x = c("Educ.", "Age", "Height", "BMI") # labels for men's matching variables
 #' labels_y = c("Educ.", "Age", "Height", "BMI") # labels for women's matching variables
 #'
@@ -121,15 +127,18 @@
 #' w = sort(runif(N-1)); w = c(w,1) - c(0,w) # sample weights
 #'
 #' # Main estimation
-#' res = estimate.affinity.matrix.lowrank(X, Y, w = w, tol_level = 1e-03, nB = 100, Nfolds = 3)
+#' res = estimate.affinity.matrix.lowrank(X, Y, w = w, tol_level = 1e-03,
+#'                                        nB = 100, Nfolds = 3)
 #'
 #' # Summarize results
 #' show.affinity.matrix(res, labels_x = labels_x, labels_y = labels_y)
 #' show.diagonal(res, labels = labels_x)
 #' show.test(res)
-#' show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
+#' show.saliency(res, labels_x = labels_x, labels_y = labels_y,
+#'               ncol_x = 2, ncol_y = 2)
 #' show.cross.validation(res)
-#' show.correlations(res, labels_x = labels_x, labels_y = labels_y, label_x_axis = "Husband", label_y_axis = "Wife", ndims = 2)
+#' show.correlations(res, labels_x = labels_x, labels_y = labels_y,
+#'                   label_x_axis = "Husband", label_y_axis = "Wife", ndims = 2)
 #'
 #' @export
 estimate.affinity.matrix.lowrank <- function(X,
@@ -179,7 +188,7 @@ estimate.affinity.matrix.lowrank <- function(X,
                                       max_iter = max_iter,
                                       tol_level = 1e-03,
                                       tau = tau)
-      Amat = res$Aopt # storing findings and using them as initial values makes calculations quicker
+      Amat = res$Aopt # using stored results as next initial values
       R = qr(Amat)$rank
       iterR = iterR + 1
       #print(c(R,lambda_max))
@@ -200,13 +209,15 @@ estimate.affinity.matrix.lowrank <- function(X,
       iterR = 0; lambda_run = 1000
       Amat = matrix(A0, nrow = Kx, ncol = Ky)
       while (lambda_run>lambda_min) {
-        if(iterR>0) lambda_run = max(lambda_run-0.01, 0) else lambda_run = round(lambda_max, digits=2)
-        res = proximal_gradient_descent(Amat, lambda_run, X_nf, Y_nf, fx_nf, fy_nf, sigma_nf,
+        if(iterR>0) lambda_run = max(lambda_run-0.01, 0) else lambda_run =
+            round(lambda_max, digits=2)
+        res = proximal_gradient_descent(Amat, lambda_run,
+                                        X_nf, Y_nf, fx_nf, fy_nf, sigma_nf,
                                         lb = lb, ub = ub,
                                         max_iter = max_iter,
                                         tol_level = 1e-03,
                                         tau = tau)
-        Amat = res$Aopt # storing findings and using them as initial values makes calculations quicker
+        Amat = res$Aopt # using stored results as next initial values
         R = qr(Amat)$rank
         iterR = iterR + 1
         cov_err = sqrt(sum((sigma_f - res$sigma)^2))
@@ -222,7 +233,7 @@ estimate.affinity.matrix.lowrank <- function(X,
     # Covariance mismatch dataset
     colnames(df) = c("fold", "iter", "lambda", "rank", "cov_err")
     df_mean = stats::aggregate(df, list(df$lambda), mean)
-    df_sd = stats::aggregate(df, list(df$lambda), function(x) sqrt(var(x)))
+    df_sd = stats::aggregate(df, list(df$lambda), function(x) sqrt(stats::var(x)))
     lambda_opt = df_mean$lambda[which.min(df_mean$cov_err)]
   } else {
     lambda_opt = manual_lambda
@@ -243,7 +254,7 @@ estimate.affinity.matrix.lowrank <- function(X,
   if (verbose) message("Saliency analysis...")
   saliency = svd(Aopt, nu=Kx, nv=Ky)
   lambda = saliency$d[1:K]
-  U = saliency$u[,1:K] # U/scaleX gives weights for unscaled data (possibly easier to interpret)
+  U = saliency$u[,1:K] # U/scaleX gives weights for unscaled data
   V = saliency$v[,1:K]
 
   # Inference
@@ -252,7 +263,7 @@ estimate.affinity.matrix.lowrank <- function(X,
   df.bootstrap = data.frame(matrix(0, nrow = nB, ncol = Kx*Ky + K + Kx*K + Ky*K))
   for (i in 1:nB) {
     #print(sprintf("%d of %d", i, nB))
-    w_b = sort(runif(N-1)); w_b = c(w_b,1) - c(0,w_b)
+    w_b = sort(stats::runif(N-1)); w_b = c(w_b,1) - c(0,w_b)
     sigma_b = t(X)%*%diag(w_b)%*%Y
     sol_b = proximal_gradient_descent(Aopt, lambda_opt, X, Y, w_b, w_b, sigma_b,
                                       lb = lb, ub = ub,
@@ -262,7 +273,7 @@ estimate.affinity.matrix.lowrank <- function(X,
     A_b = sol_b$Aopt/scale
     saliency_b = svd(A_b, nu=K, nv=K)
     d_b = saliency_b$d
-    U_b = saliency_b$u # U/scaleX gives weights for unscaled data (maybe easier to interpret)
+    U_b = saliency_b$u # U/scaleX gives weights for unscaled data
     V_b = saliency_b$v
     omega_b = rbind(U_b, V_b)
     saliency_rotation = svd(t(omega_b)%*%omega_0)
@@ -272,17 +283,21 @@ estimate.affinity.matrix.lowrank <- function(X,
   VarCov = matrix(0, nrow=Kx*Ky, ncol=Kx*Ky)
   for (k in 1:(Kx*Ky)) {
     for (l in 1:(Kx*Ky)) {
-      VarCov[k,l] = sum((df.bootstrap[,k] - mean(df.bootstrap[,k]))*(df.bootstrap[,l] - mean(df.bootstrap[,l])))/(nB-1)
+      VarCov[k,l] = sum((df.bootstrap[,k] - mean(df.bootstrap[,k]))*
+                          (df.bootstrap[,l] - mean(df.bootstrap[,l])))/(nB-1)
     }
   }
-  sdA  = matrix(sqrt(diag(VarCov)), nrow = Kx, ncol = Ky) # long, but easier to compute than inverting the Hessian
-  tA = Aopt/sdA
+  sdA  = matrix(sqrt(diag(VarCov)), nrow = Kx, ncol = Ky)
+  tA = Aopt/sdA # long, but easier to compute than inverting the Hessian
   lambdaCI = matrix(0,nrow=K,ncol=2);
-  for (k in 1:K) lambdaCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+k],c(pr/2, 1-pr/2))
+  for (k in 1:K) lambdaCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+k],
+                                                c(pr/2, 1-pr/2))
   UCI = matrix(0,nrow=Kx*K,ncol=2);
-  for (k in 1:(Kx*K)) UCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+k],c(pr/2, 1-pr/2))
+  for (k in 1:(Kx*K)) UCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+k],
+                                                c(pr/2, 1-pr/2))
   VCI = matrix(0,nrow=Ky*K,ncol=2);
-  for (k in 1:(Ky*K)) VCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+Kx*K+k],c(pr/2, 1-pr/2))
+  for (k in 1:(Ky*K)) VCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+Kx*K+k],
+                                                c(pr/2, 1-pr/2))
 
   # Test rank
   if (verbose) message("Rank tests...")
@@ -291,16 +306,20 @@ estimate.affinity.matrix.lowrank <- function(X,
     tests[[p]] = rank.test(saliency$u, saliency$v, saliency$d, VarCov, p)
   }
 
-  est_results = list("X" = X, "Y" = Y, "fx" = fx, "fy" = fy,
-                     "Aopt" = Aopt, "sdA" = sdA, "tA" = tA, "VarCovA" = VarCov, "rank.tests" = tests,
-                     "lambda.rank.restriction" = lambda_opt, "df.cross.validation" = df,
-                     "U" = U, "V" = V, "lambda" = lambda, "df.bootstrap" = df.bootstrap, "lambdaCI" = lambdaCI, "UCI" = UCI, "VCI" = VCI)
+  est_results = list("X" = X, "Y" = Y, "fx" = fx, "fy" = fy, "Aopt" = Aopt,
+                     "sdA" = sdA, "tA" = tA, "VarCovA" = VarCov,
+                     "rank.tests" = tests,
+                     "lambda.rank.restriction" = lambda_opt,
+                     "df.cross.validation" = df, "U" = U, "V" = V,
+                     "lambda" = lambda, "df.bootstrap" = df.bootstrap,
+                     "lambdaCI" = lambdaCI, "UCI" = UCI, "VCI" = VCI)
 
   return(est_results)
 
 }
 
-# Algorithm to compute the estimator under rank restriction (the larger lambda, the tighter the restriction)
+# Algorithm to compute the estimator under rank restriction
+# NB: the larger lambda, the tighter the restriction
 proximal_gradient_descent <- function(A0, lambda, X, Y, fx, fy, sigma_hat,
                                       lb = matrix(-Inf, nrow=Kx, ncol=Ky),
                                       ub = matrix(Inf, nrow=Kx, ncol=Ky),

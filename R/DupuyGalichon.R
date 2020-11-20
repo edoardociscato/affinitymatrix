@@ -83,10 +83,19 @@
 #'
 #' # Parameters
 #' Kx = 4; Ky = 4; # number of matching variables on both sides of the market
-#' N = 500 # sample size
+#' N = 200 # sample size
 #' mu = rep(0, Kx+Ky) # means of the data generating process
-#' Sigma = matrix(c(1, 0.326, 0.1446, -0.0668, 0.5712, 0.4277, 0.1847, -0.2883, 0.326, 1, -0.0372, 0.0215, 0.2795, 0.8471, 0.1211, -0.0902, 0.1446, -0.0372, 1, -0.0244, 0.2186, 0.0636, 0.1489, -0.1301, -0.0668, 0.0215, -0.0244, 1, 0.0192, 0.0452, -0.0553, 0.2717, 0.5712, 0.2795, 0.2186, 0.0192, 1, 0.3309, 0.1324, -0.1896, 0.4277, 0.8471, 0.0636, 0.0452, 0.3309, 1, 0.0915, -0.1299, 0.1847, 0.1211, 0.1489, -0.0553, 0.1324, 0.0915, 1, -0.1959, -0.2883, -0.0902, -0.1301, 0.2717, -0.1896, -0.1299, -0.1959, 1),
-#'                nrow=Kx+Ky) # (normalized) variance-covariance matrix of the data generating process
+#' Sigma = matrix(c(1, 0.326, 0.1446, -0.0668, 0.5712, 0.4277, 0.1847, -0.2883,
+#'                  0.326, 1, -0.0372, 0.0215, 0.2795, 0.8471, 0.1211, -0.0902,
+#'                  0.1446, -0.0372, 1, -0.0244, 0.2186, 0.0636, 0.1489,
+#'                  -0.1301, -0.0668, 0.0215, -0.0244, 1, 0.0192, 0.0452,
+#'                  -0.0553, 0.2717, 0.5712, 0.2795, 0.2186, 0.0192, 1, 0.3309,
+#'                  0.1324, -0.1896, 0.4277, 0.8471, 0.0636, 0.0452, 0.3309, 1,
+#'                  0.0915, -0.1299, 0.1847, 0.1211, 0.1489, -0.0553, 0.1324,
+#'                  0.0915, 1, -0.1959, -0.2883, -0.0902, -0.1301, 0.2717,
+#'                  -0.1896, -0.1299, -0.1959, 1),
+#'                nrow=Kx+Ky) # (normalized) variance-covariance matrix of the
+#'                # data generating process
 #' labels_x = c("Educ.", "Age", "Height", "BMI") # labels for men's matching variables
 #' labels_y = c("Educ.", "Age", "Height", "BMI") # labels for women's matching variables
 #'
@@ -102,8 +111,10 @@
 #' show.affinity.matrix(res, labels_x = labels_x, labels_y = labels_y)
 #' show.diagonal(res, labels = labels_x)
 #' show.test(res)
-#' show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
-#' show.correlations(res, labels_x = labels_x, labels_y = labels_y, label_x_axis = "Husband", label_y_axis = "Wife", ndims = 2)
+#' show.saliency(res, labels_x = labels_x, labels_y = labels_y,
+#'               ncol_x = 2, ncol_y = 2)
+#' show.correlations(res, labels_x = labels_x, labels_y = labels_y,
+#'                   label_x_axis = "Husband", label_y_axis = "Wife", ndims = 2)
 #'
 #' @export
 estimate.affinity.matrix <- function(X,
@@ -139,8 +150,10 @@ estimate.affinity.matrix <- function(X,
   # Optimization problem
   if (verbose) message("Main estimation...")
   sol = stats::optim(c(A0),
-                     function(A) objective(A, X, Y, fx, fy, sigma_hat, scale = scale),
-                     gr = function(A) gradient(A, X, Y, fx, fy, sigma_hat, scale = scale),
+                     function(A) objective(A, X, Y, fx, fy, sigma_hat,
+                                           scale = scale),
+                     gr = function(A) gradient(A, X, Y, fx, fy, sigma_hat,
+                                               scale = scale),
                      hessian = TRUE, method = "L-BFGS-B",
                      lower = c(lb), upper = c(ub),
                      control = list("maxit" = max_iter, factr = tol_level))
@@ -155,7 +168,7 @@ estimate.affinity.matrix <- function(X,
   if (verbose) message("Saliency analysis...")
   saliency = svd(Aopt, nu=Kx, nv=Ky)
   lambda = saliency$d[1:K]
-  U = saliency$u[,1:K] # U/scaleX gives weights for unscaled data (possibly easier to interpret)
+  U = saliency$u[,1:K] # U/scaleX gives weights for unscaled data
   V = saliency$v[,1:K]
 
   # Test rank
@@ -168,36 +181,43 @@ estimate.affinity.matrix <- function(X,
   # Inference on U, V and lambda: bootstrap
   if (verbose) message("Saliency analysis (bootstrap)...")
   omega_0 = rbind(U, V)
-  df.bootstrap = data.frame(matrix(0, nrow = nB, ncol = Kx*Ky + K + Kx*K + Ky*K))
+  df.bootstrap = data.frame(matrix(0, nrow = nB,
+                                   ncol = Kx*Ky + K + Kx*K + Ky*K))
   for (i in 1:nB) {
     #print(sprintf("%d of %d", i, B))
     A_b = matrix(MASS::mvrnorm(n = 1, c(Aopt), VarCov), nrow = Kx, ncol = Ky)
     saliency_b = svd(A_b, nu=K, nv=K)
     d_b = saliency_b$d
-    U_b = saliency_b$u # U/scaleX gives weights for unscaled data (maybe easier to interpret)
+    U_b = saliency_b$u # U/scaleX gives weights for unscaled data
     V_b = saliency_b$v
     omega_b = rbind(U_b, V_b)
     saliency_rotation = svd(t(omega_b)%*%omega_0)
     Q = saliency_rotation$u%*%t(saliency_rotation$v)
     df.bootstrap[i,] = c(c(A_b), c(d_b), c(U_b%*%Q), c(V_b%*%Q))
   }
-  #VarCov_b = matrix(0, nrow=Kx*Ky, ncol=Kx*Ky)
-  #for (k in 1:(Kx*Ky))
-  #  for (l in 1:(Kx*Ky)) {
-  #    VarCov_b[k,l] = sum((df.bootstrap[,k] - mean(df.bootstrap[,k]))*(df.bootstrap[,l] - mean(df.bootstrap[,l])))/(B-1)
+  #VarCov_b = matrix(0, nrow=K*K, ncol=K*K) # can be computed just as a check
+  #for (k in 1:(K*K))
+  #  for (l in 1:(K*K)) {
+  #    VarCov_b[k,l] = sum((df.bootstrap[,k] - mean(df.bootstrap[,k]))*
+  #                        (df.bootstrap[,l] - mean(df.bootstrap[,l])))/(B-1)
   #  }
   #}
-  #sdA_b  = matrix(sqrt(diag(VarCov_b)), nrow = Kx, ncol = Ky) # computed just as a check
+  #sdA_b  = matrix(sqrt(diag(VarCov_b)), nrow = K, ncol = K)
   lambdaCI = matrix(0,nrow=K,ncol=2);
-  for (k in 1:K) lambdaCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+k],c(pr/2, 1-pr/2))
+  for (k in 1:K) lambdaCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+k],
+                                                c(pr/2, 1-pr/2))
   UCI = matrix(0,nrow=Kx*K,ncol=2);
-  for (k in 1:(Kx*K)) UCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+k],c(pr/2, 1-pr/2))
+  for (k in 1:(Kx*K)) UCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+k],
+                                                c(pr/2, 1-pr/2))
   VCI = matrix(0,nrow=Ky*K,ncol=2);
-  for (k in 1:(Ky*K)) VCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+Kx*K+k],c(pr/2, 1-pr/2))
+  for (k in 1:(Ky*K)) VCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+Kx*K+k],
+                                                c(pr/2, 1-pr/2))
 
-  est_results = list("X" = X, "Y" = Y, "fx" = fx, "fy" = fy,
-                     "Aopt" = Aopt, "sdA" = sdA, "tA" = tA, "VarCovA" = VarCov, "rank.tests" = tests,
-                     "U" = U, "V" = V, "lambda" = lambda, "df.bootstrap" = df.bootstrap, "lambdaCI" = lambdaCI, "UCI" = UCI, "VCI" = VCI)
+  est_results = list("X" = X, "Y" = Y, "fx" = fx, "fy" = fy, "Aopt" = Aopt,
+                     "sdA" = sdA, "tA" = tA, "VarCovA" = VarCov,
+                     "rank.tests" = tests, "U" = U, "V" = V, "lambda" = lambda,
+                     "df.bootstrap" = df.bootstrap, "lambdaCI" = lambdaCI,
+                     "UCI" = UCI, "VCI" = VCI)
 
   return(est_results)
 
@@ -229,7 +249,7 @@ rescale.data <- function(X, Xref = X) {
   X = as.matrix(X)
   N = nrow(X); K = ncol(X)
   mX = colMeans(X, dims=1, na.rm=TRUE)
-  scaleX = sqrt(diag(cov(X, use="pairwise.complete.obs")))
+  scaleX = sqrt(diag(stats::cov(X, use="pairwise.complete.obs")))
   for (k in 1:K) X[,k] = (X[,k] - mX[k])/scaleX[k]
 
   return(X)

@@ -4,31 +4,30 @@
 \alias{show.diagonal}
 \title{Print the diagonal of the affinity matrix}
 \usage{
-show.diagonal(
-  res,
-  path = getwd(),
-  name = "diagonal_affinity_matrix",
-  labels = paste0("Trait ", 1:K),
-  pr = 0.05
-)
+show.diagonal(res, labels = paste0("Trait ", 1:K), pr = 0.05)
 }
 \arguments{
-\item{res}{A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.}
+\item{res}{A list corresponding to the output of
+\code{\link{estimate.affinity.matrix}},
+\code{\link{estimate.affinity.matrix.lowrank}} or
+\code{\link{estimate.affinity.matrix.unipartite}}.}
 
-\item{path}{A string indicating the path where to save the txt file. Defaults to current path.}
+\item{labels}{A vector of strings indicating the names of the matching
+variables. Defaults to \code{"Trait k"} for every \code{k} matching
+variable.}
 
-\item{name}{A string indicating the name of the txt file. Defaults to \code{"diagonal_affinity_matrix"}.}
-
-\item{labels}{A vector of strings indicating the names of the matching variables. Defaults to \code{"Trait k"} for every \code{k} matching variable.}
-
-\item{pr}{A probability indicating the two-tailed significance level required for an estimated parameter to be printed in boldface. Defaults to 0.05 and can be set to 0 to avoid printing any estimate in boldface.}
+\item{pr}{A probability indicating the two-tailed significance level required
+for an estimated parameter to be printed in boldface. Defaults to 0.05
+and can be set to 0 to avoid printing any estimate in boldface.}
 }
 \value{
-The function saves a txt file in tex style in \code{path}.
+The function returns a long string in LaTeX style that can be
+processed in the standard LaTeX tabular environment in order to display
+the estimates of diagonal of the affinity matrix \code{Aopt}.
 }
 \description{
-This function prints the estimated diagonal elements of the affinity matrix in tex style and stores them in a txt file.
-}
-\details{
-For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
+This function prints the estimates of the diagonal of the affinity matrix in
+LaTeX style. Standard errors are printed below the elements of the affinity
+matrix. Estimates that are significant at the \code{pr} level are printed in
+boldface: this format feature can be avoided by setting \code{pr} to 0.
 }

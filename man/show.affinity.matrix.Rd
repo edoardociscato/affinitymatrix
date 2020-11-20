@@ -6,32 +6,37 @@
 \usage{
 show.affinity.matrix(
   res,
-  path = getwd(),
-  name = "affinity_matrix",
   labels_x = paste0("Trait ", 1:Kx),
   labels_y = paste0("Trait ", 1:Ky),
   pr = 0.05
 )
 }
 \arguments{
-\item{res}{A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.}
+\item{res}{A list corresponding to the output of
+\code{\link{estimate.affinity.matrix}},
+\code{\link{estimate.affinity.matrix.lowrank}} or
+\code{\link{estimate.affinity.matrix.unipartite}}.}
 
-\item{path}{A string indicating the path where to save the txt file. Defaults to current path.}
+\item{labels_x}{A vector of strings indicating the names of men's matching
+variables. Defaults to \code{"Trait k"} for every \code{k} matching
+variable.}
 
-\item{name}{A string indicating the name of the txt file. Defaults to \code{"affinity_matrix"}.}
+\item{labels_y}{A vector of strings indicating the names of women's matching
+variables. Defaults to \code{"Trait k"} for every \code{k} matching
+variable.}
 
-\item{labels_x}{A vector of strings indicating the names of men's matching variables. Defaults to \code{"Trait k"} for every \code{k} matching variable.}
-
-\item{labels_y}{A vector of strings indicating the names of women's matching variables. Defaults to \code{"Trait k"} for every \code{k} matching variable.}
-
-\item{pr}{A probability indicating the two-tailed significance level required for an estimated parameter to be printed in boldface. Defaults to 0.05 and can be set to 0 to avoid printing any estimate in boldface.}
+\item{pr}{A probability indicating the two-tailed significance level required
+for an estimated parameter to be printed in boldface. Defaults to 0.05
+and can be set to 0 to avoid printing any estimate in boldface.}
 }
 \value{
-The function saves a txt file in tex style in \code{path}.
+The function returns a long string in LaTeX style that can be
+processed in the standard LaTeX tabular environment in order to display
+the estimates of the affinity matrix \code{Aopt}.
 }
 \description{
-This function prints the estimated affinity matrix in tex style and stores it in a txt file.
-}
-\details{
-For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
+This function prints the estimated affinity matrix in LaTeX style. Standard
+errors are printed below the elements of the affinity matrix. Estimates that
+are significant at the \code{pr} level are printed in boldface: this format
+feature can be avoided by setting \code{pr} to 0.
 }

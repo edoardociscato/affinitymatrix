@@ -114,10 +114,17 @@ roommates or teammates.
 
 # Parameters
 K = 4 # number of matching variables
-N = 500 # sample size
+N = 200 # sample size
 mu = rep(0, 2*K) # means of the data generating process
-Sigma = matrix(c(1, -0.0992, 0.0443, -0.0246, -0.8145, 0.083, -0.0438, 0.0357, -0.0992, 1, 0.0699, -0.0043, 0.083, 0.8463, 0.0699, -0.0129, 0.0443, 0.0699, 1, -0.0434, -0.0438, 0.0699, 0.5127, -0.0383, -0.0246, -0.0043, -0.0434, 1, 0.0357, -0.0129, -0.0383, 0.6259, -0.8145, 0.083, -0.0438, 0.0357, 1, -0.0992, 0.0443, -0.0246, 0.083, 0.8463, 0.0699, -0.0129, -0.0992, 1, 0.0699, -0.0043, -0.0438, 0.0699, 0.5127, -0.0383, 0.0443, 0.0699, 1, -0.0434, 0.0357, -0.0129, -0.0383, 0.6259, -0.0246, -0.0043, -0.0434, 1),
-               nrow=Kx+Ky) # (normalized) variance-covariance matrix of the data generating process with a block symmetric structure
+Sigma = matrix(c(1, -0.0992, 0.0443, -0.0246, -0.8145, 0.083, -0.0438,
+    0.0357, -0.0992, 1, 0.0699, -0.0043, 0.083, 0.8463, 0.0699, -0.0129, 0.0443,
+    0.0699, 1, -0.0434, -0.0438, 0.0699, 0.5127, -0.0383, -0.0246, -0.0043,
+    -0.0434, 1, 0.0357, -0.0129, -0.0383, 0.6259, -0.8145, 0.083, -0.0438,
+    0.0357, 1, -0.0992, 0.0443, -0.0246, 0.083, 0.8463, 0.0699, -0.0129, -0.0992,
+    1, 0.0699, -0.0043, -0.0438, 0.0699, 0.5127, -0.0383, 0.0443, 0.0699, 1,
+    -0.0434, 0.0357, -0.0129, -0.0383, 0.6259, -0.0246, -0.0043, -0.0434, 1),
+               nrow=K+K) # (normalized) variance-covariance matrix of the
+               # data generating process with a block symmetric structure
 labels = c("Sex", "Age", "Educ.", "Black") # labels for matching variables
 
 # Sample
@@ -132,15 +139,18 @@ res = estimate.affinity.matrix.unipartite(X, Y, w = w, nB = 500)
 show.affinity.matrix(res, labels_x = labels, labels_y = labels)
 show.diagonal(res, labels = labels)
 show.test(res)
-show.saliency(res, labels_x = labels, labels_y = labels, ncol_x = 2, ncol_y = 2)
-show.correlations(res, labels_x = labels, labels_y = labels, label_x_axis = "First partner", label_y_axis = "Second partner", ndims = 2)
+show.saliency(res, labels_x = labels, labels_y = labels,
+              ncol_x = 2, ncol_y = 2)
+show.correlations(res, labels_x = labels, labels_y = labels,
+                  label_x_axis = "First partner",
+                  label_y_axis = "Second partner", ndims = 2)
 
 }
 \seealso{
-\strong{Ciscato, Edoardo, Alfred Galichon, and Marion Gousse}.
-"Like attract like? a structural comparison of homogamy across same-sex
-and different-sex households." \emph{Journal of Political Economy} 128,
-no. 2 (2020): 740-781. \strong{Dupuy, Arnaud, and Alfred Galichon}.
-"Personality traits and the marriage market." \emph{Journal of Political
-Economy} 122, no. 6 (2014): 1271-1319.
+\strong{Ciscato, Edoardo, Alfred Galichon, and Marion Gousse}. "Like
+attract like? a structural comparison of homogamy across same-sex and
+different-sex households." \emph{Journal of Political Economy} 128, no. 2
+(2020): 740-781. \strong{Dupuy, Arnaud, and Alfred Galichon}. "Personality
+traits and the marriage market." \emph{Journal of Political Economy} 122,
+no. 6 (2014): 1271-1319.
 }

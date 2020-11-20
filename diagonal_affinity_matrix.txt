@@ -1,6 +1,0 @@
-Educ.	& Age	& Height	& BMI	\\\hline
-
-\textbf{0.76}	& \textbf{3.74}	& \textbf{0.26}	& \textbf{0.18}	\\
-
-(0.08)	& (0.26)	& (0.05)	& (0.05)	\\
-

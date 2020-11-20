@@ -4,21 +4,21 @@
 \alias{show.cross.validation}
 \title{Print cross validation summary}
 \usage{
-show.cross.validation(res, path = getwd(), name = "cross_validation_plot")
+show.cross.validation(res)
 }
 \arguments{
-\item{res}{A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.}
-
-\item{path}{A string indicating the path where to save the plot. Defaults to current path.}
-
-\item{name}{A string indicating the name of the plot. Defaults to \code{"affinity_matrix"}.}
+\item{res}{A list corresponding to the output of
+\code{\link{estimate.affinity.matrix}},
+\code{\link{estimate.affinity.matrix.lowrank}} or
+\code{\link{estimate.affinity.matrix.unipartite}}.}
 }
 \value{
-The function saves a png file in \code{path}.
+The function returns a plot created with
+\code{\link[ggplot2]{ggplot}}.
 }
 \description{
-This function prints a plot where it is shown the covariance mismatch as an estimated function of the rank restriction parameter lambda - the result of the cross validation exercise. The function is expected to be convex in lambda and the chosen lambda is the unique minimum.
-}
-\details{
-For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
+This function returns a plot reporting the estimated covariance mismatch as a
+function of the rank restriction parameter lambda. This is the result of the
+cross validation exercise. The function is expected to be convex in lambda
+and the chosen lambda is the unique minimum.
 }

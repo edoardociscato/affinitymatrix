@@ -6,9 +6,6 @@
 \usage{
 show.saliency(
   res,
-  path = getwd(),
-  name_x = "saliency_analysis_x",
-  name_y = "saliency_analysis_y",
   ncol_x = Kx,
   ncol_y = Ky,
   labels_x = paste0("Trait ", 1:Kx),
@@ -17,30 +14,45 @@ show.saliency(
 )
 }
 \arguments{
-\item{res}{A list corresponding to the output of \code{\link{estimate.affinity.matrix}}, \code{\link{estimate.affinity.matrix.lowrank}} or \code{\link{estimate.affinity.matrix.unipartite}}.}
+\item{res}{A list corresponding to the output of
+\code{\link{estimate.affinity.matrix}},
+\code{\link{estimate.affinity.matrix.lowrank}} or
+\code{\link{estimate.affinity.matrix.unipartite}}.}
 
-\item{path}{A string indicating the path where to save the txt file. Defaults to current path.}
+\item{ncol_x}{An integer indicating the number of singular vector to print
+for men. The function prints the first \code{ncol_x} singular vectors.
+Defaults to \code{ncol(U)}.}
 
-\item{name_x}{A string indicating the name of the txt file storing the results for men. Defaults to \code{"saliency_analysis_x"}.}
+\item{ncol_y}{An integer indicating the number of singular vector to print
+for women. The function prints the first \code{ncol_y} singular vectors.
+Defaults to \code{ncol(V)}.}
 
-\item{name_y}{A string indicating the name of the txt file storing the results for women. Defaults to \code{"saliency_analysis_y"}.}
+\item{labels_x}{A vector of strings indicating the names of men's matching
+variables. Defaults to \code{"Trait k"} for every \code{k} matching
+variable.}
 
-\item{ncol_x}{An integer indicating the number of singular vector to print for men. The function prints the first \code{ncol_x} singular vectors. Defaults to \code{ncol(U)}.}
+\item{labels_y}{A vector of strings indicating the names of women's matching
+variables. Defaults to \code{"Trait k"} for every \code{k} matching
+variable.}
 
-\item{ncol_y}{An integer indicating the number of singular vector to print for women. The function prints the first \code{ncol_y} singular vectors. Defaults to \code{ncol(V)}.}
-
-\item{labels_x}{A vector of strings indicating the names of men's matching variables. Defaults to \code{"Trait k"} for every \code{k} matching variable.}
-
-\item{labels_y}{A vector of strings indicating the names of women's matching variables. Defaults to \code{"Trait k"} for every \code{k} matching variable.}
-
-\item{pr}{A probability indicating the two-tailed significance level required for an estimated parameter to be printed in boldface. Defaults to 0.05 and can be set to 0 to avoid printing any estimate in boldface.}
+\item{pr}{A probability indicating the two-tailed significance level required
+for an estimated parameter to be printed in boldface. Defaults to 0.05
+and can be set to 0 to avoid printing any estimate in boldface.}
 }
 \value{
-The function saves a txt file in tex style in \code{path}.
+The function returns a long string in LaTeX style that can be
+processed in the standard LaTeX tabular environment in order to display
+the estimates of the vectors of loadings for the first \code{ncol_x}
+men's matching factors and the first \code{ncol_y} women's matching
+factors.
 }
 \description{
-This function prints the results from the saliency analysis in tex style and stores them in a txt file.
-}
-\details{
-For the sake of clarity, we refer to "men" as the observations on one side of the market and to "women" as the observations on the other side.
+This function prints the results from the saliency analysis in LaTeX style.
+The function returns a list of two elements: \code{U.table} contains the
+first \code{ncol_x} vectors of loadings that map men's \code{Kx} observed
+traits into the first \code{ncol_x} matching factors; \code{V.table} contains
+the first \code{ncol_y} vectors of loadings that map women's \code{Ky}
+observed traits into the first \code{ncol_y} matching factors. In both
+tables, the last line reports the normalized singular values of the affinity
+matrix in descending order.
 }

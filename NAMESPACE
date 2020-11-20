@@ -3,6 +3,7 @@
 export(estimate.affinity.matrix)
 export(estimate.affinity.matrix.lowrank)
 export(estimate.affinity.matrix.unipartite)
+export(export.table)
 export(show.affinity.matrix)
 export(show.correlations)
 export(show.cross.validation)
