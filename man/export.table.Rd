@@ -9,7 +9,7 @@ export.table(tabular, name = "table", path = getwd())
 \arguments{
 \item{tabular}{A long string corresponding to the output of
 \code{\link{show.affinity.matrix}}, \code{\link{show.diagonal}} or
-\code{\lin{rank.tests}}, or one of the two elements of
+\code{\link{rank.tests}}, or one of the two elements of
 \code{\link{show.saliency}} (\code{U.table} or \code{V.table}).}
 
 \item{name}{A string indicating the name of the txt file. Defaults to
