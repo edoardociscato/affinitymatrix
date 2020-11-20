@@ -543,5 +543,11 @@ export.table = function(tabular,
                      file = paste0(path,"/",name,".txt"),
                      row.names = FALSE, col.names = FALSE, quote = FALSE)
 
-  }
+}
 
+# Utility function used in the README file
+latex.to.markdown = function(tabular){
+
+  return(gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n|$", "", tabular)))
+
+}

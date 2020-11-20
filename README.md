@@ -13,6 +13,47 @@ from matched data. The package contains a set of functions to implement
 the tools developed by Dupuy and Galichon (2014), Dupuy, Galichon and
 Sun (2019) and Ciscato, Galichon and Gousse (2020).
 
+  - `estimate.affinity.matrix` estimates the affinity matrix of the
+    matching model of Dupuy and Galichon (2014), performs the saliency
+    analysis and the rank tests. The user must supply a matched sample
+    that is treated as the equilibrium matching of a bipartite
+    one-to-one matching model without frictions and with Transferable
+    Utility. For the sake of clarity, in the documentation we take the
+    example of the marriage market and refer to “men” as the
+    observations on one side of the market and to “women” as the
+    observations on the other side. Other applications may include
+    matching between CEOs and firms, firms and workers, buyers and
+    sellers, etc. An example is provided below.
+
+  - `estimate.affinity.matrix.lowrank` estimates the affinity matrix of
+    the matching model of Dupuy and Galichon (2014) under a rank
+    restriction on the affinity matrix, as suggested by Dupuy, Galichon
+    and Sun (2019). In their own words, “to accommodate high
+    dimensionality of the data, they propose a novel method that
+    incorporates a nuclear norm regularization which effectively
+    enforces a rank constraint on the affinity matrix.” This function
+    also performs the saliency analysis and the rank tests. This
+    function is a potential alternative to `estimate.affinity.matrix`
+    when the number of matching variables is low relatively to the
+    number of observed matches or when the researcher believes that the
+    number of dimensions of the matching problem is much lower than the
+    number of observed variables considered.
+
+  - `estimate.affinity.matrix.unipartite` estimates the affinity matrix
+    of the matching model of Ciscato, Gousse and Galichon (2020),
+    performs the saliency analysis and the rank tests. The model is
+    called unipartite (otherwise known as the “roommate problem”) and
+    differs from the original Dupuy and Galichon (2014) since all agents
+    are pooled in one group and can match within the group. For the sake
+    of clarity, in the documentation we take the example of the same-sex
+    marriage market and refer to “first partner” and “second partner” in
+    order to distinguish between the arbitrary partner order in a
+    database (e.g., survey respondent and partner of the respondent).
+    Note that in this case the variable “sex” is treated as a matching
+    variable rather than a criterion to assign partners to one side of
+    the market as in the bipartite case. Other applications may include
+    matching between coworkers, roommates or teammates.
+
 ## Installation
 
 <!-- You can install the released version of affinitymatrix from [CRAN](https://CRAN.R-project.org) with:
@@ -49,7 +90,7 @@ library(affinitymatrix)
 
 # Parameters
 Kx = 4; Ky = 4; # number of matching variables on both sides of the market
-N = 500 # sample size
+N = 100 # sample size
 mu = rep(0, Kx+Ky) # means of the data generating process
 Sigma = matrix(c(1, 0.326, 0.1446, -0.0668, 0.5712, 0.4277, 0.1847, -0.2883, 0.326, 1, -0.0372, 0.0215, 0.2795, 0.8471, 0.1211, -0.0902, 0.1446, -0.0372, 1, -0.0244, 0.2186, 0.0636, 0.1489, -0.1301, -0.0668, 0.0215, -0.0244, 1, 0.0192, 0.0452, -0.0553, 0.2717, 0.5712, 0.2795, 0.2186, 0.0192, 1, 0.3309, 0.1324, -0.1896, 0.4277, 0.8471, 0.0636, 0.0452, 0.3309, 1, 0.0915, -0.1299, 0.1847, 0.1211, 0.1489, -0.0553, 0.1324, 0.0915, 1, -0.1959, -0.2883, -0.0902, -0.1301, 0.2717, -0.1896, -0.1299, -0.1959, 1),
                nrow=Kx+Ky) # (normalized) variance-covariance matrix of the data generating process
@@ -80,21 +121,77 @@ contain tables and plots that are generated with these functions.
 
 ``` r
 # Print affinity matrix with standard errors
-show.affinity.matrix(res, labels_x = labels_x, labels_y = labels_y)
+table1 = show.affinity.matrix(res, labels_x = labels_x, labels_y = labels_y)
+# Here we print a Markdown version: we recommend using the function export.table to store the tables in a txt file
+# export.table(table1, name = "affinity_matrix", "path = "myresults")
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n", "", table1))
+#>       [,1]     [,2]      [,3]      [,4]      [,5]      
+#>  [1,] ""       "Educ."   "Age"     "Height"  "BMI"     
+#>  [2,] "Educ."  "0.92***" "0.59"    "0.69***" "-0.40***"
+#>  [3,] ""       "(0.25) " "(0.42) " "(0.21) " "(0.18) " 
+#>  [4,] "Age"    "0.18"    "6.38***" "0.02"    "0.40"    
+#>  [5,] ""       "(0.40) " "(0.98) " "(0.32) " "(0.32) " 
+#>  [6,] "Height" "0.70***" "0.52"    "0.22"    "-0.01"   
+#>  [7,] ""       "(0.18) " "(0.30) " "(0.16) " "(0.13) " 
+#>  [8,] "BMI"    "0.01"    "0.32"    "0.11"    "0.41***" 
+#>  [9,] ""       "(0.16) " "(0.30) " "(0.15) " "(0.14) "
 
 # Print diagonal elements of the affinity matrix with standard errors
-show.diagonal(res, labels = labels_x)
+table2 = show.diagonal(res, labels = labels_x)
+# export.table(table2, name = "diagonal_affinity_matrix", "path = "myresults")
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n", "", table2))
+#>      [,1]      [,2]      [,3]     [,4]     
+#> [1,] "Educ."   "Age"     "Height" "BMI"    
+#> [2,] "0.92***" "6.38***" "0.22"   "0.41***"
+#> [3,] "(0.25)"  "(0.98)"  "(0.16)" "(0.14)"
 
 # Print rank test summary
-show.test(res)
+table3 = show.test(res)
+# export.table(table3, name = "rank_tests", "path = "myresults")
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n", "", table3))
+#>      [,1]               [,2]    [,3]    [,4]   
+#> [1,] "$H_0$: $rk(A)=k$" "$k=1$" "$k=2$" "$k=3$"
+#> [2,] "$chi^2$"          "42.00" "10.27" "2.63" 
+#> [3,] "$df$"             "9"     "4"     "1"    
+#> [4,] "Rejected?"        "Yes"   "Yes"   "No"
 
 # Print results from saliency analysis
-show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
+table4 = show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
+# export.table(table4$U.table, name = "saliency_men", "path = "myresults")
+# export.table(table4$V.table, name = "saliency_women", "path = "myresults")
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n|$", "", table4$U.table))
+#>      [,1]           [,2]      [,3]      
+#> [1,] ""             "Index 1" "Index 2" 
+#> [2,] "Educ."        "0.10***" "0.87***" 
+#> [3,] "Age"          "0.99***" "-0.12***"
+#> [4,] "Height"       "0.09***" "0.48***" 
+#> [5,] "BMI"          "0.05***" "-0.05"   
+#> [6,] " Index share" "0.76"    "0.16"
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n|$", "", table4$V.table))
+#>      [,1]           [,2]      [,3]      
+#> [1,] ""             "Index 1" "Index 2" 
+#> [2,] "Educ."        "0.05"    "0.81***" 
+#> [3,] "Age"          "1.00***" "-0.03"   
+#> [4,] "Height"       "0.02"    "0.51***" 
+#> [5,] "BMI"          "0.06***" "-0.30***"
+#> [6,] " Index share" "0.76"    "0.16"
 
 # Show correlation between observed variables and matching factors
 plots = show.correlations(res, labels_x = labels_x, labels_y = labels_y,
                           label_x_axis = "Husband", label_y_axis = "Wife")
+# for (d in 1:length(plots)) ggsave(paste0("myresults/plot_",d) plot = plots[d])
+plots[1]
+#> [[1]]
 ```
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="75%" style="display: block; margin: auto;" />
+
+``` r
+plots[2]
+#> [[1]]
+```
+
+<img src="man/figures/README-unnamed-chunk-3-2.png" width="75%" style="display: block; margin: auto;" />
 
 ## Literature
 
