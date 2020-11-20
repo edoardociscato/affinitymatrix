@@ -523,7 +523,7 @@ show.correlations = function(res,
 #'
 #' @param tabular A long string corresponding to the output of
 #'     \code{\link{show.affinity.matrix}}, \code{\link{show.diagonal}} or
-#'     \code{\link{rank.tests}}, or one of the two elements of
+#'     \code{\link{show.test}}, or one of the two elements of
 #'     \code{\link{show.saliency}} (\code{U.table} or \code{V.table}).
 #' @param path A string indicating the path where to save the txt file. Defaults
 #'     to current path.
