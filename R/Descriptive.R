@@ -418,7 +418,7 @@ show.cross.validation = function(res) {
 #' @return The function returns a list of \code{ndims} plots created with
 #'     \code{\link[ggplot2]{ggplot}}.
 #'
-#' @seealso \strong{Chiappori, Pierre-André, Edoardo Ciscato, and Carla
+#' @seealso \strong{Chiappori, Pierre-Andre, Edoardo Ciscato, and Carla
 #'     Guerriero}. "Analyzing matching patterns in marriage: theory and
 #'     application to Italian data." \emph{HCEO Working Paper} no. 2020-080
 #'     (2020).

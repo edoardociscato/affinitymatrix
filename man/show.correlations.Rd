@@ -95,7 +95,7 @@ between the outcome variable and the woman's k-th matching factor is on the
 y-axis.
 }
 \seealso{
-\strong{Chiappori, Pierre-André, Edoardo Ciscato, and Carla
+\strong{Chiappori, Pierre-Andre, Edoardo Ciscato, and Carla
 Guerriero}. "Analyzing matching patterns in marriage: theory and
 application to Italian data." \emph{HCEO Working Paper} no. 2020-080
 (2020).

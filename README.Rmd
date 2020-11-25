@@ -8,7 +8,6 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
   out.width = "100%"
 )
 ```
@@ -33,7 +32,7 @@ The goal of `affinitymatrix` is to provide a set of tools to estimate matching m
 ``` r
 install.packages("affinitymatrix") 
 ```-->
-You can install the released version of affinitymatrix directly from [Github](https://github.com/edoardociscato/affinitymatrix) with:
+You can install the released version of `affinitymatrix` directly from [Github](https://github.com/edoardociscato/affinitymatrix) with:
 
 ``` r
 devtools::install_github("edoardociscato/affinitymatrix")
@@ -73,24 +72,24 @@ The output of `estimate.affinity.matrix` is a list of objects that constitute th
 table1 = show.affinity.matrix(res, labels_x = labels_x, labels_y = labels_y)
 # Here we print a Markdown version: we recommend using the function export.table to store the tables in a txt file
 # export.table(table1, name = "affinity_matrix", "path = "myresults")
-latex.to.markdown(table1)
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n", "", table1))
 
 # Print diagonal elements of the affinity matrix with standard errors
 table2 = show.diagonal(res, labels = labels_x)
 # export.table(table2, name = "diagonal_affinity_matrix", "path = "myresults")
-latex.to.markdown(table2)
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n", "", table2))
 
 # Print rank test summary
 table3 = show.test(res)
 # export.table(table3, name = "rank_tests", "path = "myresults")
-latex.to.markdown(table3)
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n", "", table3))
 
 # Print results from saliency analysis
 table4 = show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
 # export.table(table4$U.table, name = "saliency_men", "path = "myresults")
 # export.table(table4$V.table, name = "saliency_women", "path = "myresults")
-latex.to.markdown(table4$U.table)
-latex.to.markdown(table4$V.table)
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n|$", "", table4$U.table))
+gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n|$", "", table4$V.table))
 
 # Show correlation between observed variables and matching factors
 plots = show.correlations(res, labels_x = labels_x, labels_y = labels_y,

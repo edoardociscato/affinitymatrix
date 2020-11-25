@@ -88,7 +88,7 @@
 #'
 #' # Parameters
 #' K = 4 # number of matching variables
-#' N = 200 # sample size
+#' N = 100 # sample size
 #' mu = rep(0, 2*K) # means of the data generating process
 #' Sigma = matrix(c(1, -0.0992, 0.0443, -0.0246, -0.8145, 0.083, -0.0438,
 #'     0.0357, -0.0992, 1, 0.0699, -0.0043, 0.083, 0.8463, 0.0699, -0.0129, 0.0443,

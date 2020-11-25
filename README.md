@@ -62,7 +62,7 @@ Sun (2019) and Ciscato, Galichon and Gousse (2020).
 install.packages("affinitymatrix") 
 ```-->
 
-You can install the released version of affinitymatrix directly from
+You can install the released version of `affinitymatrix` directly from
 [Github](https://github.com/edoardociscato/affinitymatrix) with:
 
 ``` r
@@ -127,23 +127,23 @@ table1 = show.affinity.matrix(res, labels_x = labels_x, labels_y = labels_y)
 gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n", "", table1))
 #>       [,1]     [,2]      [,3]      [,4]      [,5]      
 #>  [1,] ""       "Educ."   "Age"     "Height"  "BMI"     
-#>  [2,] "Educ."  "0.92***" "0.59"    "0.69***" "-0.40***"
-#>  [3,] ""       "(0.25) " "(0.42) " "(0.21) " "(0.18) " 
-#>  [4,] "Age"    "0.18"    "6.38***" "0.02"    "0.40"    
-#>  [5,] ""       "(0.40) " "(0.98) " "(0.32) " "(0.32) " 
-#>  [6,] "Height" "0.70***" "0.52"    "0.22"    "-0.01"   
-#>  [7,] ""       "(0.18) " "(0.30) " "(0.16) " "(0.13) " 
-#>  [8,] "BMI"    "0.01"    "0.32"    "0.11"    "0.41***" 
-#>  [9,] ""       "(0.16) " "(0.30) " "(0.15) " "(0.14) "
+#>  [2,] "Educ."  "1.12***" "0.39"    "0.08"    "-0.45***"
+#>  [3,] ""       "(0.25) " "(0.34) " "(0.18) " "(0.18) " 
+#>  [4,] "Age"    "-0.52"   "4.48***" "0.98***" "0.69***" 
+#>  [5,] ""       "(0.35) " "(0.71) " "(0.29) " "(0.28) " 
+#>  [6,] "Height" "0.15"    "0.41"    "0.10"    "-0.12"   
+#>  [7,] ""       "(0.17) " "(0.26) " "(0.13) " "(0.13) " 
+#>  [8,] "BMI"    "0.78***" "0.14"    "0.10"    "0.07"    
+#>  [9,] ""       "(0.19) " "(0.27) " "(0.14) " "(0.14) "
 
 # Print diagonal elements of the affinity matrix with standard errors
 table2 = show.diagonal(res, labels = labels_x)
 # export.table(table2, name = "diagonal_affinity_matrix", "path = "myresults")
 gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n", "", table2))
-#>      [,1]      [,2]      [,3]     [,4]     
-#> [1,] "Educ."   "Age"     "Height" "BMI"    
-#> [2,] "0.92***" "6.38***" "0.22"   "0.41***"
-#> [3,] "(0.25)"  "(0.98)"  "(0.16)" "(0.14)"
+#>      [,1]      [,2]      [,3]     [,4]    
+#> [1,] "Educ."   "Age"     "Height" "BMI"   
+#> [2,] "1.12***" "4.48***" "0.10"   "0.07"  
+#> [3,] "(0.25)"  "(0.71)"  "(0.13)" "(0.14)"
 
 # Print rank test summary
 table3 = show.test(res)
@@ -151,9 +151,9 @@ table3 = show.test(res)
 gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n", "", table3))
 #>      [,1]               [,2]    [,3]    [,4]   
 #> [1,] "$H_0$: $rk(A)=k$" "$k=1$" "$k=2$" "$k=3$"
-#> [2,] "$chi^2$"          "42.00" "10.27" "2.63" 
+#> [2,] "$chi^2$"          "36.55" "6.62"  "0.06" 
 #> [3,] "$df$"             "9"     "4"     "1"    
-#> [4,] "Rejected?"        "Yes"   "Yes"   "No"
+#> [4,] "Rejected?"        "Yes"   "No"    "No"
 
 # Print results from saliency analysis
 table4 = show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2, ncol_y = 2)
@@ -162,19 +162,19 @@ table4 = show.saliency(res, labels_x = labels_x, labels_y = labels_y, ncol_x = 2
 gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n|$", "", table4$U.table))
 #>      [,1]           [,2]      [,3]      
 #> [1,] ""             "Index 1" "Index 2" 
-#> [2,] "Educ."        "0.10***" "0.87***" 
-#> [3,] "Age"          "0.99***" "-0.12***"
-#> [4,] "Height"       "0.09***" "0.48***" 
-#> [5,] "BMI"          "0.05***" "-0.05"   
-#> [6,] " Index share" "0.76"    "0.16"
+#> [2,] "Educ."        "0.05"    "0.85***" 
+#> [3,] "Age"          "1.00***" "-0.06***"
+#> [4,] "Height"       "0.08"    "0.16"    
+#> [5,] "BMI"          "0.02"    "0.51***" 
+#> [6,] " Index share" "0.72"    "0.22"
 gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n|$", "", table4$V.table))
-#>      [,1]           [,2]      [,3]      
-#> [1,] ""             "Index 1" "Index 2" 
-#> [2,] "Educ."        "0.05"    "0.81***" 
-#> [3,] "Age"          "1.00***" "-0.03"   
-#> [4,] "Height"       "0.02"    "0.51***" 
-#> [5,] "BMI"          "0.06***" "-0.30***"
-#> [6,] " Index share" "0.76"    "0.16"
+#>      [,1]           [,2]       [,3]      
+#> [1,] ""             "Index 1"  "Index 2" 
+#> [2,] "Educ."        "-0.09***" "0.95***" 
+#> [3,] "Age"          "0.96***"  "0.12***" 
+#> [4,] "Height"       "0.21***"  "0.05"    
+#> [5,] "BMI"          "0.14***"  "-0.28***"
+#> [6,] " Index share" "0.72"     "0.22"
 
 # Show correlation between observed variables and matching factors
 plots = show.correlations(res, labels_x = labels_x, labels_y = labels_y,
