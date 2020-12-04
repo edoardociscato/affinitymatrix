@@ -19,8 +19,8 @@ Sun (2019) and Ciscato, Galichon and Gousse (2020).
     that is treated as the equilibrium matching of a bipartite
     one-to-one matching model without frictions and with Transferable
     Utility. For the sake of clarity, in the documentation we take the
-    example of the marriage market and refer to “men” as the
-    observations on one side of the market and to “women” as the
+    example of the marriage market and refer to 'men' as the
+    observations on one side of the market and to 'women' as the
     observations on the other side. Other applications may include
     matching between CEOs and firms, firms and workers, buyers and
     sellers, etc. An example is provided below.
@@ -28,10 +28,10 @@ Sun (2019) and Ciscato, Galichon and Gousse (2020).
   - `estimate.affinity.matrix.lowrank` estimates the affinity matrix of
     the matching model of Dupuy and Galichon (2014) under a rank
     restriction on the affinity matrix, as suggested by Dupuy, Galichon
-    and Sun (2019). In their own words, “to accommodate high
+    and Sun (2019). In their own words, 'to accommodate high
     dimensionality of the data, they propose a novel method that
     incorporates a nuclear norm regularization which effectively
-    enforces a rank constraint on the affinity matrix.” This function
+    enforces a rank constraint on the affinity matrix.' This function
     also performs the saliency analysis and the rank tests. This
     function is a potential alternative to `estimate.affinity.matrix`
     when the number of matching variables is low relatively to the
@@ -42,27 +42,27 @@ Sun (2019) and Ciscato, Galichon and Gousse (2020).
   - `estimate.affinity.matrix.unipartite` estimates the affinity matrix
     of the matching model of Ciscato, Gousse and Galichon (2020),
     performs the saliency analysis and the rank tests. The model is
-    called unipartite (otherwise known as the “roommate problem”) and
+    called unipartite (otherwise known as the 'roommate problem') and
     differs from the original Dupuy and Galichon (2014) since all agents
     are pooled in one group and can match within the group. For the sake
     of clarity, in the documentation we take the example of the same-sex
-    marriage market and refer to “first partner” and “second partner” in
+    marriage market and refer to 'first partner' and 'second partner' in
     order to distinguish between the arbitrary partner order in a
     database (e.g., survey respondent and partner of the respondent).
-    Note that in this case the variable “sex” is treated as a matching
+    Note that in this case the variable 'sex' is treated as a matching
     variable rather than a criterion to assign partners to one side of
     the market as in the bipartite case. Other applications may include
     matching between coworkers, roommates or teammates.
 
 ## Installation
 
-<!-- You can install the released version of affinitymatrix from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of `affinitymatrix` from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("affinitymatrix") 
-```-->
+```
 
-You can install the released version of `affinitymatrix` directly from
+You can install the development version directly from
 [Github](https://github.com/edoardociscato/affinitymatrix) with:
 
 ``` r
@@ -78,10 +78,10 @@ variance-covariance matrix used in the data generating process are taken
 from Chiappori, Ciscato and Guerriero (2020). For the sake of clarity,
 consider the marriage market example: every row of our data frame
 corresponds to a couple. The first `Kx` columns correspond to the
-husbands’ characteristics, or *matching variables*, while the last `Ky`
-columns correspond to the wives’. The key inputs to feed to
+husbands' characteristics, or *matching variables*, while the last `Ky`
+columns correspond to the wives'. The key inputs to feed to
 `estimate.affinity.matrix` are two matrices `X` and `Y` corresponding to
-the husbands’ and wives’ traits and sorted so that the i-th man in `X`
+the husbands' and wives' traits and sorted so that the i-th man in `X`
 is married to the i-th woman in `Y`.
 
 ``` r
@@ -113,8 +113,8 @@ res = estimate.affinity.matrix(X, Y, w = w, nB = 500)
 
 The output of `estimate.affinity.matrix` is a list of objects that
 constitute the estimation results. The estimated affinity matrix is
-stored under `Aopt`, while the vector of loadings describing men’s and
-women’s matching factors are stored under `U` and `V` respectively. The
+stored under `Aopt`, while the vector of loadings describing men's and
+women's matching factors are stored under `U` and `V` respectively. The
 following functions can be used to produce summaries of the different
 findings. For further details, Chiappori, Ciscato and Guerriero (2020)
 contain tables and plots that are generated with these functions.
@@ -195,18 +195,18 @@ plots[2]
 
 ## Literature
 
-Ciscato, Edoardo, Alfred Galichon, and Marion Gousse. “Like attract
+Ciscato, Edoardo, Alfred Galichon, and Marion Gousse. 'Like attract
 like? a structural comparison of homogamy across same-sex and
-different-sex households.” *Journal of Political Economy* 128, no. 2
+different-sex households.' *Journal of Political Economy* 128, no. 2
 (2020): 740-781.
 
 Chiappori, Pierre-André, Edoardo Ciscato, and Carla Guerriero.
-“Analyzing matching patterns in marriage: theory and application to
-Italian data.” *HCEO Working Paper* no. 2020-080 (2020).
+'Analyzing matching patterns in marriage: theory and application to
+Italian data.' *HCEO Working Paper* no. 2020-080 (2020).
 
-Dupuy, Arnaud, and Alfred Galichon. “Personality traits and the marriage
-market.” *Journal of Political Economy* 122, no. 6 (2014): 1271-1319.
+Dupuy, Arnaud, and Alfred Galichon. 'Personality traits and the marriage
+market.' *Journal of Political Economy* 122, no. 6 (2014): 1271-1319.
 
-Dupuy, Arnaud, Alfred Galichon, and Yifei Sun. “Estimating matching
-affinity matrices under low-rank constraints.” *Information and
+Dupuy, Arnaud, Alfred Galichon, and Yifei Sun. 'Estimating matching
+affinity matrices under low-rank constraints.' *Information and
 Inference: A Journal of the IMA* 8, no. 4 (2019): 677-689.
