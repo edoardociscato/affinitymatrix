@@ -278,11 +278,11 @@ show.saliency = function(res,
         if (i==1 & j==ncol_x) num_m = paste0("Index ",l,"\t\\\\\\hline\n")
         if (1<i & i<Kx+2 & j==1) num_m = paste0(labels_x[k],"\t&")
         if (1<i & i<Kx+2 & 1<j & j<ncol_x) {
-          if(testU[k,l]>.1) {num_m = sprintf("\\textbf{%0.2f}\t&", U[k,l])
+          if(testU[k,l]) {num_m = sprintf("\\textbf{%0.2f}\t&", U[k,l])
           } else num_m = sprintf("%0.2f\t&", U[k,l])
         }
         if (1<i & i<Kx+2 & j==ncol_x) {
-          if(testU[k,l]>.1) { num_m = sprintf("\\textbf{%0.2f}\t\\\\\n", U[k,l])
+          if(testU[k,l]) { num_m = sprintf("\\textbf{%0.2f}\t\\\\\n", U[k,l])
           } else num_m = sprintf("%0.2f\t\\\\\n", U[k,l])
         }
         if (i==Kx+2 & j==1) num_m = "\\hline Index share\t&"
@@ -303,11 +303,11 @@ show.saliency = function(res,
       if (i==1 & j==ncol_y) num_f = paste0("Index ",l,"\t\\\\\\hline\n")
       if (1<i & i<Ky+2 & j==1) num_f = paste0(labels_y[k],"\t&")
       if (1<i & i<Ky+2 & 1<j & j<ncol_y) {
-        if(testV[k,l]>.1) { num_f = sprintf("\\textbf{%0.2f}\t&", V[k,l])
+        if(testV[k,l]) { num_f = sprintf("\\textbf{%0.2f}\t&", V[k,l])
         } else num_f = sprintf("%0.2f\t&", V[k,l])
       }
       if (1<i & i<Ky+2 & j==ncol_y) {
-        if(testV[k,l]>.1) { num_f = sprintf("\\textbf{%0.2f}\t\\\\\n", V[k,l])
+        if(testV[k,l]) { num_f = sprintf("\\textbf{%0.2f}\t\\\\\n", V[k,l])
         } else num_f = sprintf("%0.2f\t\\\\\n", V[k,l])
       }
       if (i==Ky+2 & j==1) num_f = "\\hline Index share\t&"

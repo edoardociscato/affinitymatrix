@@ -248,8 +248,8 @@ rescale.data <- function(X, Xref = X) {
 
   X = as.matrix(X)
   N = nrow(X); K = ncol(X)
-  mX = colMeans(X, dims=1, na.rm=TRUE)
-  scaleX = sqrt(diag(stats::cov(X, use="pairwise.complete.obs")))
+  mX = colMeans(Xref, dims=1, na.rm=TRUE)
+  scaleX = sqrt(diag(stats::cov(Xref, use="pairwise.complete.obs")))
   for (k in 1:K) X[,k] = (X[,k] - mX[k])/scaleX[k]
 
   return(X)

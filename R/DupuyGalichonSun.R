@@ -182,42 +182,42 @@ estimate.affinity.matrix.lowrank <- function(X,
       res = proximal_gradient_descent(Amat, lambda_max, X, Y, fx, fy, sigma_hat,
                                       lb = lb, ub = ub,
                                       max_iter = max_iter,
-                                      tol_level = 1e-03,
+                                      tol_level = tol_level,
                                       tau = tau)
       Amat = res$Aopt # using stored results as next initial values
       R = qr(Amat)$rank
       iterR = iterR + 1
-      #print(c(R,lambda_max))
+      print(c(R,lambda_max))
     }
     # Sample partition
     df = data.frame()
-    index = rep(1:Nfolds, ceiling(N/Nfolds)); index = index[sample(1:length(index))][1:N]
+    W_f = matrix(0, nrow = N, ncol = Nfolds)
+    for (i in 1:N) {
+      part = sort(stats::runif(Nfolds-1))
+      W_f[i,] = w[i]*(c(part,1) - c(0,part))/sum(w)
+    }
     # Covariance mismatch fold by fold
     for (f in 1:Nfolds) {
-      X_f = X[index==f,]; Y_f = Y[index==f,]
-      pixy_f = pixy_hat[index==f,index==f]; pixy_f = pixy_f / sum(pixy_f)
-      sigma_f = t(X_f)%*%pixy_f%*%Y_f
-      X_nf = X[index!=f,]; Y_nf = Y[index!=f,]
-      fx_nf = fx[index!=f]; fx_nf = fx_nf/sum(fx_nf)
-      fy_nf = fy[index!=f]; fy_nf = fy_nf/sum(fy_nf)
-      pixy_nf = pixy_hat[index!=f,index!=f]; pixy_nf = pixy_nf / sum(pixy_nf)
-      sigma_nf = t(X_nf)%*%pixy_nf%*%Y_nf
+      w_f = W_f[,f]; w_f = w_f/sum(w_f)
+      w_nf = rowSums(W_f[,-f]); w_nf = w_nf/sum(w_nf)
+      sigma_f = t(X)%*%diag(w_f)%*%Y
+      sigma_nf = t(X)%*%diag(w_nf)%*%Y
       iterR = 0; lambda_run = 1000
       Amat = matrix(A0, nrow = Kx, ncol = Ky)
       while (lambda_run>lambda_min) {
         if(iterR>0) lambda_run = max(lambda_run-0.01, 0) else lambda_run =
             round(lambda_max, digits=2)
         res = proximal_gradient_descent(Amat, lambda_run,
-                                        X_nf, Y_nf, fx_nf, fy_nf, sigma_nf,
+                                        X, Y, w_nf, w_nf, sigma_nf,
                                         lb = lb, ub = ub,
                                         max_iter = max_iter,
-                                        tol_level = 1e-03,
+                                        tol_level = tol_level,
                                         tau = tau)
         Amat = res$Aopt # using stored results as next initial values
         R = qr(Amat)$rank
         iterR = iterR + 1
         cov_err = sqrt(sum((sigma_f - res$sigma)^2))
-        #print(c(f,lambda_run,R,cov_err))
+        print(c(f,lambda_run,R,cov_err))
         df = rbind(df, cbind(f,
                              iterR,
                              lambda_run,
@@ -325,34 +325,51 @@ proximal_gradient_descent <- function(A0, lambda, X, Y, fx, fy, sigma_hat,
                                       scale = 1) {
 
   # Optimization problem
-  tol = 1e+10; iter = 0
+  tol = 1e+10; tol_lag = tol+1; iter = 0; f = 1e+99
   N = nrow(X); Kx = ncol(X); Ky = ncol(Y)
-  Amat = matrix(A0, nrow = Kx, ncol = Ky)
+  A0 = pmin(A0, ub); A0 = pmax(A0, lb)
+  A = matrix(A0, nrow = Kx, ncol = Ky)
+  A_lag = A; A_lag_2 = A
   lb = matrix(lb, nrow=Kx, ncol=Ky)
   ub = matrix(ub, nrow=Kx, ncol=Ky)
   while(tol > tol_level && iter < max_iter) {
 
+    # Update
+    f_lag = f; A_lag = A; A_lag_2 = A_lag; tol_lag = tol
+    A = A_lag + (iter - 2)*(A_lag - A_lag_2)/(iter + 1)
+
     # Auxiliary variable
-    A0 = Amat
-    A0 = pmin(A0, ub); A0 = pmax(A0, lb)
-    Kxy = exp(X%*%Amat%*%t(Y)/scale)
+    Kxy = exp(X%*%A%*%t(Y)/scale)
     normConst = sum(Kxy)
     Kxy = Kxy / normConst
 
     # Optimal pi
     pixy = piopt(Kxy, fx, fy)
 
-    # Step
-    Amat = Amat - tau*(t(X)%*%pixy%*%Y - sigma_hat)
-    saliency = svd(Amat)
-    Amat = saliency$u%*%diag(pmax(saliency$d - tau*lambda,0))%*%t(saliency$v)
-    tol = max((abs(Amat-A0)/A0))
+    # Update
+    A = A - tau*(t(X)%*%pixy%*%Y - sigma_hat)
+    saliency = svd(A)
+    # soft-thresholding
+    A = saliency$u%*%diag(pmax(saliency$d - tau*lambda,0))%*%t(saliency$v)
+    # apply constraints
+    A = pmin(A, ub); A = pmax(A, lb)
+
+    # Objective function
+    systsurplus = sum((X%*%A%*%t(Y))*pixy)
+    entropy = sum(pixy*log(pmax(pixy,1e-250)))
+    twistedtrace = sum(sigma_hat*A)
+    nuclearnorm = sum(svd(A)$d)
+    f = systsurplus - scale*entropy - twistedtrace + nuclearnorm
+
+    # Check convergence
+    tol = abs((f-f_lag)/f_lag)
+    #print(tol)
     iter = iter+1
 
   }
 
   if(iter>=max_iter) warning("WARNING: proximal gradient descent reached max_iter")
 
-  return(list("Aopt" = Amat, "pixy" = pixy, "sigma" = t(X)%*%pixy%*%Y))
+  return(list("Aopt" = A, "pixy" = pixy, "sigma" = t(X)%*%pixy%*%Y))
 
 }
