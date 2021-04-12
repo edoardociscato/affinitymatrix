@@ -327,9 +327,9 @@ rank.test <- function(U, V, lambda, VarCov, p) {
 
   Tp = solve(expm::sqrtm(U22%*%t(U22)))%*%U22%*%S2%*%Vp22%*%expm::sqrtm(solve(t(Vp22)%*%Vp22))
   Ap = U[1:Kx,(p+1):Kx]%*%solve(U22)%*%expm::sqrtm(U22%*%t(U22))
-  Bp = expm::sqrtm(t(Vp22)%*%Vp22)%*%solve(Vp22)%*%Vp[(p+1):Ky,1:Ky]
+  Bp = expm::sqrtm(t(Vp22)%*%Vp22)%*%MASS::ginv(Vp22)%*%Vp[(p+1):Ky,1:Ky]
   Op = kronecker(Bp,t(Ap))%*%VarCov%*%t(kronecker(Bp,t(Ap)))
-  st = t(c(Tp))%*%solve(Op)%*%c(Tp)
+  st = t(c(Tp))%*%MASS::ginv(Op)%*%c(Tp)
   df = (Kx-p)*(Ky-p)
 
   return(list("p" = p, "chi2" = st, "df" = df))
