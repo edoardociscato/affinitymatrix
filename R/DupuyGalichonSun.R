@@ -191,24 +191,25 @@ estimate.affinity.matrix.lowrank <- function(X,
     }
     # Sample partition
     df = data.frame()
-    W_f = matrix(0, nrow = N, ncol = Nfolds)
-    for (i in 1:N) {
-      part = sort(stats::runif(Nfolds-1))
-      W_f[i,] = w[i]*(c(part,1) - c(0,part))/sum(w)
-    }
+    index = rep(1:Nfolds, ceiling(N/Nfolds))
+    index = index[sample(1:length(index))][1:N]
     # Covariance mismatch fold by fold
     for (f in 1:Nfolds) {
-      w_f = W_f[,f]; w_f = w_f/sum(w_f)
-      w_nf = rowSums(W_f[,-f]); w_nf = w_nf/sum(w_nf)
-      sigma_f = t(X)%*%diag(w_f)%*%Y
-      sigma_nf = t(X)%*%diag(w_nf)%*%Y
+      X_f = X[index==f,]; Y_f = Y[index==f,]
+      pixy_f = pixy_hat[index==f,index==f]; pixy_f = pixy_f / sum(pixy_f)
+      sigma_f = t(X_f)%*%pixy_f%*%Y_f
+      X_nf = X[index!=f,]; Y_nf = Y[index!=f,]
+      fx_nf = fx[index!=f]; fx_nf = fx_nf/sum(fx_nf)
+      fy_nf = fy[index!=f]; fy_nf = fy_nf/sum(fy_nf)
+      pixy_nf = pixy_hat[index!=f,index!=f]; pixy_nf = pixy_nf / sum(pixy_nf)
+      sigma_nf = t(X_nf)%*%pixy_nf%*%Y_nf
       iterR = 0; lambda_run = 1000
       Amat = matrix(A0, nrow = Kx, ncol = Ky)
       while (lambda_run>lambda_min) {
         if(iterR>0) lambda_run = max(lambda_run-0.01, 0) else lambda_run =
             round(lambda_max, digits=2)
         res = proximal_gradient_descent(Amat, lambda_run,
-                                        X, Y, w_nf, w_nf, sigma_nf,
+                                        X_nf, Y_nf, fx_nf, fy_nf, sigma_nf,
                                         lb = lb, ub = ub,
                                         max_iter = max_iter,
                                         tol_level = tol_level,
@@ -217,7 +218,7 @@ estimate.affinity.matrix.lowrank <- function(X,
         R = qr(Amat)$rank
         iterR = iterR + 1
         cov_err = sqrt(sum((sigma_f - res$sigma)^2))
-        print(c(f,lambda_run,R,cov_err))
+        #print(c(f,lambda_run,R,cov_err))
         df = rbind(df, cbind(f,
                              iterR,
                              lambda_run,
@@ -258,7 +259,7 @@ estimate.affinity.matrix.lowrank <- function(X,
   omega_0 = rbind(U, V)
   df.bootstrap = data.frame(matrix(0, nrow = nB, ncol = Kx*Ky + K + Kx*K + Ky*K))
   for (i in 1:nB) {
-    #print(sprintf("%d of %d", i, nB))
+    print(sprintf("%d of %d", i, nB))
     w_b = sort(stats::runif(N-1)); w_b = c(w_b,1) - c(0,w_b)
     sigma_b = t(X)%*%diag(w_b)%*%Y
     sol_b = proximal_gradient_descent(Aopt, lambda_opt, X, Y, w_b, w_b, sigma_b,
