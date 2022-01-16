@@ -180,19 +180,20 @@ estimate.affinity.matrix <- function(X,
 
   # Inference on U, V and lambda: bootstrap
   if (verbose) message("Saliency analysis (bootstrap)...")
-  omega_0 = rbind(U, V)
+  omega_0 = rbind(X%*%U, Y%*%V)
   df.bootstrap = data.frame(matrix(0, nrow = nB,
                                    ncol = Kx*Ky + K + Kx*K + Ky*K))
   for (i in 1:nB) {
-    #print(sprintf("%d of %d", i, B))
+    #print(sprintf("%d of %d", i, nB))
     A_b = matrix(MASS::mvrnorm(n = 1, c(Aopt), VarCov), nrow = Kx, ncol = Ky)
     saliency_b = svd(A_b, nu=K, nv=K)
     d_b = saliency_b$d
     U_b = saliency_b$u # U/scaleX gives weights for unscaled data
     V_b = saliency_b$v
-    omega_b = rbind(U_b, V_b)
-    saliency_rotation = svd(t(omega_b)%*%omega_0)
-    Q = saliency_rotation$u%*%t(saliency_rotation$v)
+    omega_b = rbind(X%*%U_b, Y%*%V_b)
+    rotation = vegan::procrustes(omega_0, omega_b)$rotation
+    U_b = U_b%*%rotation
+    V_b = V_b%*%rotation
     df.bootstrap[i,] = c(c(A_b), c(d_b), c(U_b%*%Q), c(V_b%*%Q))
   }
   #VarCov_b = matrix(0, nrow=K*K, ncol=K*K) # can be computed just as a check
@@ -325,7 +326,7 @@ rank.test <- function(U, V, lambda, VarCov, p) {
   S1 = S[1:p,1:p]
   S2 = S[(p+1):Kx,(p+1):Ky]
 
-  Tp = solve(expm::sqrtm(U22%*%t(U22)))%*%U22%*%S2%*%Vp22%*%expm::sqrtm(solve(t(Vp22)%*%Vp22))
+  Tp = MASS::ginv(expm::sqrtm(U22%*%t(U22)))%*%U22%*%S2%*%Vp22%*%expm::sqrtm(MASS::ginv(t(Vp22)%*%Vp22))
   Ap = U[1:Kx,(p+1):Kx]%*%solve(U22)%*%expm::sqrtm(U22%*%t(U22))
   Bp = expm::sqrtm(t(Vp22)%*%Vp22)%*%MASS::ginv(Vp22)%*%Vp[(p+1):Ky,1:Ky]
   Op = kronecker(Bp,t(Ap))%*%VarCov%*%t(kronecker(Bp,t(Ap)))

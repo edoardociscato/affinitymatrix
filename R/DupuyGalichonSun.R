@@ -256,10 +256,10 @@ estimate.affinity.matrix.lowrank <- function(X,
 
   # Inference
   if (verbose) message("Inference (bootstrap)...")
-  omega_0 = rbind(U, V)
+  omega_0 = rbind(X%*%U, Y%*%V)
   df.bootstrap = data.frame(matrix(0, nrow = nB, ncol = Kx*Ky + K + Kx*K + Ky*K))
   for (i in 1:nB) {
-    print(sprintf("%d of %d", i, nB))
+    #print(sprintf("%d of %d", i, nB))
     w_b = sort(stats::runif(N-1)); w_b = c(w_b,1) - c(0,w_b)
     sigma_b = t(X)%*%diag(w_b)%*%Y
     sol_b = proximal_gradient_descent(Aopt, lambda_opt, X, Y, w_b, w_b, sigma_b,
@@ -272,9 +272,10 @@ estimate.affinity.matrix.lowrank <- function(X,
     d_b = saliency_b$d
     U_b = saliency_b$u # U/scaleX gives weights for unscaled data
     V_b = saliency_b$v
-    omega_b = rbind(U_b, V_b)
-    saliency_rotation = svd(t(omega_b)%*%omega_0)
-    Q = saliency_rotation$u%*%t(saliency_rotation$v)
+    omega_b = rbind(X%*%U_b, Y%*%V_b)
+    pro_res = procrustes(omega_0, omega_b)
+    U_b = U_b%*%pro_res$rotation
+    V_b = V_b%*%pro_res$rotation
     df.bootstrap[i,] = c(A_b, d_b, U_b%*%Q, V_b%*%Q)
   }
   VarCov = matrix(0, nrow=Kx*Ky, ncol=Kx*Ky)
