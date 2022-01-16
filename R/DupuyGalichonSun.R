@@ -273,7 +273,7 @@ estimate.affinity.matrix.lowrank <- function(X,
     U_b = saliency_b$u # U/scaleX gives weights for unscaled data
     V_b = saliency_b$v
     omega_b = rbind(X%*%U_b, Y%*%V_b)
-    pro_res = procrustes(omega_0, omega_b)
+    rotation = vegan::procrustes(omega_0, omega_b)$rotation
     U_b = U_b%*%pro_res$rotation
     V_b = V_b%*%pro_res$rotation
     df.bootstrap[i,] = c(A_b, d_b, U_b, V_b)
