@@ -194,7 +194,7 @@ estimate.affinity.matrix <- function(X,
     rotation = vegan::procrustes(omega_0, omega_b)$rotation
     U_b = U_b%*%rotation
     V_b = V_b%*%rotation
-    df.bootstrap[i,] = c(c(A_b), c(d_b), c(U_b%*%Q), c(V_b%*%Q))
+    df.bootstrap[i,] = c(A_b, d_b, U_b, V_b)
   }
   #VarCov_b = matrix(0, nrow=K*K, ncol=K*K) # can be computed just as a check
   #for (k in 1:(K*K))

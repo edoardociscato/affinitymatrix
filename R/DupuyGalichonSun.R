@@ -276,7 +276,7 @@ estimate.affinity.matrix.lowrank <- function(X,
     pro_res = procrustes(omega_0, omega_b)
     U_b = U_b%*%pro_res$rotation
     V_b = V_b%*%pro_res$rotation
-    df.bootstrap[i,] = c(A_b, d_b, U_b%*%Q, V_b%*%Q)
+    df.bootstrap[i,] = c(A_b, d_b, U_b, V_b)
   }
   VarCov = matrix(0, nrow=Kx*Ky, ncol=Kx*Ky)
   for (k in 1:(Kx*Ky)) {
