@@ -174,8 +174,8 @@ estimate.affinity.matrix.lowrank <- function(X,
 
   # Determine lambda_max (lambda s.t. rank of Aopt is 1)
   if (verbose) message("Cross Validation...")
+  Amat = matrix(A0, nrow = Kx, ncol = Ky);
   if (cross_validation) {
-    Amat = matrix(A0, nrow = Kx, ncol = Ky);
     lambda_max = 0.1; R = 10; iterR = 0
     while (R>1 && iterR<= 50) {
       if(iterR>0) lambda_max = lambda_max + .1
@@ -187,7 +187,7 @@ estimate.affinity.matrix.lowrank <- function(X,
       Amat = res$Aopt # using stored results as next initial values
       R = qr(Amat)$rank
       iterR = iterR + 1
-      print(c(R,lambda_max))
+      #print(c(R,lambda_max))
     }
     # Sample partition
     df = data.frame()
