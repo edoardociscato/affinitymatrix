@@ -274,8 +274,8 @@ estimate.affinity.matrix.lowrank <- function(X,
     V_b = saliency_b$v
     omega_b = rbind(X%*%U_b, Y%*%V_b)
     rotation = vegan::procrustes(omega_0, omega_b)$rotation
-    U_b = U_b%*%pro_res$rotation
-    V_b = V_b%*%pro_res$rotation
+    U_b = U_b%*%rotation
+    V_b = V_b%*%rotation
     df.bootstrap[i,] = c(A_b, d_b, U_b, V_b)
   }
   VarCov = matrix(0, nrow=Kx*Ky, ncol=Kx*Ky)
