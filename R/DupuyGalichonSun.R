@@ -265,7 +265,7 @@ estimate.affinity.matrix.lowrank <- function(X,
     sol_b = proximal_gradient_descent(Aopt, lambda_opt, X, Y, w_b, w_b, sigma_b,
                                       lb = lb, ub = ub,
                                       max_iter = max_iter,
-                                      tol_level = 1e-03,
+                                      tol_level = tol_level,
                                       tau = tau)
     A_b = sol_b$Aopt/scale
     saliency_b = svd(A_b, nu=K, nv=K)
