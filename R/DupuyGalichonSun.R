@@ -262,7 +262,7 @@ estimate.affinity.matrix.lowrank <- function(X,
   if (verbose) message("Inference (bootstrap)...")
   omega_0 = rbind(X%*%U, Y%*%V)
   df.bootstrap = data.frame(matrix(0, nrow = nB, ncol = Kx*Ky + K + Kx*K + Ky*K))
-  for (i in 1:nB) {\
+  for (i in 1:nB) {
     if (bootstrap.method=="frequentist") {
       bootstrap.draw = sample(1:N, N, replace=TRUE)
       w_b = w[bootstrap.draw]
