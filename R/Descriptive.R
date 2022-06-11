@@ -479,7 +479,7 @@ show.correlations = function(res,
     cor$size = c(rep(size_arrows[1],K),rep(size_arrows[2],Kz))
     cor$Variable = c(rep("Matching",K),rep("Outcome",Kz))
     cor$font = c(rep(font_labels[1],K),rep(font_labels[2],Kz))
-    cor$hjust = .5 + cor$x/2 #ifelse(cor$x>0, 0, 1)
+    cor$hjust = ifelse(cor$x>0, 0, 1) #.5 + cor$x/2
     cor$vjust = ifelse(cor$y>0, 1, 0)
     circle_dat = data.frame(tt = seq(0,2*pi,length.out = 5000))
     circle_dat$xx = cos(circle_dat$tt); circle_dat$yy = sin(circle_dat$tt)
