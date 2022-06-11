@@ -503,7 +503,7 @@ show.correlations = function(res,
                                                 type="closed")) +
       ggrepel::geom_text_repel(data = cor[cor$filter,],
                                ggplot2::aes_string(x="x",y="y",label="label",
-                                                   hjust="hjust",vjust="vjust",
+                                                   #hjust="hjust",vjust="vjust",
                                                    fontface="font"),
                                size=2, segment.size=0.25, seed=1, max.overlaps=Inf,
                                xlim=c(NA,NA), ylim=c(NA,NA)) +
