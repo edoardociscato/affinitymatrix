@@ -68,6 +68,9 @@
 #'   it is reasonable to set \code{lambda_min} to a higher value. Defaults to 0.
 #' @param Nfolds An integer indicating the number of folds in the cross
 #'   validation. Defaults to 5 and can be increased with a large sample size.
+#' @param bootstrap.method A string that can take values "frequentist" and
+#'   "bayesian". It determines what bootstrap method to use. Defaults to
+#'   "frequentist".
 #' @param nB An integer indicating the number of bootstrap replications used to
 #'   compute the confidence intervals of \code{Aopt}, \code{U}, \code{V} and
 #'   \code{lambda}. Defaults to 2000.
@@ -152,6 +155,7 @@ estimate.affinity.matrix.lowrank <- function(X,
                                              manual_lambda = 0.,
                                              lambda_min = 0,
                                              Nfolds = 5,
+                                             bootstrap.method = "frequentist",
                                              nB = 2000,
                                              verbose = TRUE)
 {
@@ -258,11 +262,24 @@ estimate.affinity.matrix.lowrank <- function(X,
   if (verbose) message("Inference (bootstrap)...")
   omega_0 = rbind(X%*%U, Y%*%V)
   df.bootstrap = data.frame(matrix(0, nrow = nB, ncol = Kx*Ky + K + Kx*K + Ky*K))
-  for (i in 1:nB) {
+  for (i in 1:nB) {\
+    if (bootstrap.method=="frequentist") {
+      bootstrap.draw = sample(1:N, N, replace=TRUE)
+      w_b = w[bootstrap.draw]
+      w_b = w_b/sum(w_b)
+      X_b = X[bootstrap.draw,]
+      Y_b = Y[bootstrap.draw,]
+    } else if (bootstrap.method=="bayesian") {
+      w_b = sort(stats::runif(N-1))
+      w_b = c(w_b,1) - c(0,w_b)
+      X_b = X
+      Y_b = Y
+    } else {
+      stop("bootstrap.method must be 'frequentist' or 'bayesian'")
+    }
     #print(sprintf("%d of %d", i, nB))
-    w_b = sort(stats::runif(N-1)); w_b = c(w_b,1) - c(0,w_b)
-    sigma_b = t(X)%*%diag(w_b)%*%Y
-    sol_b = proximal_gradient_descent(Aopt, lambda_opt, X, Y, w_b, w_b, sigma_b,
+    sigma_b = t(X_b)%*%diag(w_b)%*%Y_b
+    sol_b = proximal_gradient_descent(Aopt, lambda_opt, X_b, Y_b, w_b, w_b, sigma_b,
                                       lb = lb, ub = ub,
                                       max_iter = max_iter,
                                       tol_level = tol_level,
@@ -272,7 +289,7 @@ estimate.affinity.matrix.lowrank <- function(X,
     d_b = saliency_b$d
     U_b = saliency_b$u # U/scaleX gives weights for unscaled data
     V_b = saliency_b$v
-    omega_b = rbind(X%*%U_b, Y%*%V_b)
+    omega_b = rbind(X_b%*%U_b, Y_b%*%V_b)
     rotation = vegan::procrustes(omega_0, omega_b)$rotation
     U_b = U_b%*%rotation
     V_b = V_b%*%rotation
