@@ -184,7 +184,7 @@ estimate.affinity.matrix <- function(X,
   df.bootstrap = data.frame(matrix(0, nrow = nB,
                                    ncol = Kx*Ky + K + Kx*K + Ky*K))
   for (i in 1:nB) {
-    #print(sprintf("%d of %d", i, nB))
+    print(sprintf("%d of %d", i, nB))
     A_b = matrix(MASS::mvrnorm(n = 1, c(Aopt), VarCov), nrow = Kx, ncol = Ky)
     saliency_b = svd(A_b, nu=K, nv=K)
     d_b = saliency_b$d

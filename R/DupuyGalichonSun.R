@@ -277,7 +277,7 @@ estimate.affinity.matrix.lowrank <- function(X,
     } else {
       stop("bootstrap.method must be 'frequentist' or 'bayesian'")
     }
-    #print(sprintf("%d of %d", i, nB))
+    print(sprintf("%d of %d", i, nB))
     sigma_b = t(X_b)%*%diag(w_b)%*%Y_b
     sol_b = proximal_gradient_descent(Aopt, lambda_opt, X_b, Y_b, w_b, w_b, sigma_b,
                                       lb = lb, ub = ub,
