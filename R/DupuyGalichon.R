@@ -180,7 +180,7 @@ estimate.affinity.matrix <- function(X,
 
   # Inference on U, V and lambda: bootstrap
   if (verbose) message("Saliency analysis (bootstrap)...")
-  omega_0 = X%*%U
+  omega_0 = rbind(U, V)
   df.bootstrap = data.frame(matrix(0, nrow = nB,
                                    ncol = Kx*Ky + K + Kx*K + Ky*K))
   for (i in 1:nB) {
@@ -190,8 +190,9 @@ estimate.affinity.matrix <- function(X,
     d_b = saliency_b$d
     U_b = saliency_b$u # U/scaleX gives weights for unscaled data
     V_b = saliency_b$v
-    omega_b = X%*%U_b
+    omega_b = rbind(U_b, V_b)
     rotation = vegan::procrustes(omega_0, omega_b)$rotation
+    print(rotation)
     U_b = U_b%*%rotation
     V_b = V_b%*%rotation
     df.bootstrap[i,] = c(A_b, d_b, U_b, V_b)
