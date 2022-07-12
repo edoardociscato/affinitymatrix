@@ -21,7 +21,6 @@ Imports:
 	MASS,
 	Hmisc,
 	ggplot2,
-	ggrepel,
-	vegan
+	ggrepel
 Suggests: 
     testthat
