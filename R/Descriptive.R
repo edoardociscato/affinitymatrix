@@ -112,7 +112,7 @@ show.diagonal = function(res,
   test.A = matrix(FALSE, nrow=K, ncol=length(pr))
   for (i in 1:length(pr)) {
     A.CI = matrix(0,nrow=K,ncol=2);
-    for (k in 1:K) A.CI[k,] = stats::quantile(df.bootstrap[,index.diag(k)],
+    for (k in 1:K) A.CI[k,] = stats::quantile(df.bootstrap[,index.diag[k]],
                                               c(pr[i]/2, 1-pr[i]/2))
     test.A[,i] = sign(A.CI[,1]*A.CI[,2])==1
   }
