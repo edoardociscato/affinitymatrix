@@ -105,7 +105,7 @@ show.diagonal = function(res,
                          pr = c(0.1, 0.05, 0.01)) {
 
   # Tests
-  A = diag(res$Aopt); sdA = diag(res$sdA)\
+  A = diag(res$Aopt); sdA = diag(res$sdA)
   index.diag = diag(matrix(1:length(res$Aopt), ncol=ncol(res$Aopt)))
   K = length(A)
   df.bootstrap = res$df.bootstrap
