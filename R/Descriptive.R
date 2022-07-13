@@ -555,7 +555,7 @@ show.correlations = function(res,
       ggplot2::geom_path(data = circle_dat,
                          ggplot2::aes_string(x="xx",y="yy"), color="grey") +
       ggplot2::geom_vline(xintercept = 0, size=.5, color="grey") +
-      ggplot2::geom_midrule(yintercept = 0, size=.5, color="grey") +
+      ggplot2::geom_hline(yintercept = 0, size=.5, color="grey") +
       ggplot2::geom_segment(data = cor[cor$filter,],
                             ggplot2::aes_string(x="origin",y="origin",
                                                 colour="Variable",size="size",
