@@ -15,9 +15,10 @@
 #' @param labels_y A vector of strings indicating the names of women's matching
 #'     variables. Defaults to \code{"Trait k"} for every \code{k} matching
 #'     variable.
-#' @param pr A probability indicating the two-tailed significance level required
-#'     for an estimated parameter to be printed in boldface. Defaults to 0.05
-#'     and can be set to 0 to avoid printing any estimate in boldface.
+#' @param pr A vector of length three indicating the two-tailed significance
+#'     level required to get the corresponding number of stars in the printed
+#'     table. Defaults to \code{c(0.1, 0.05, 0.01)} and can be set to
+#'     \code{c(0, 0, 0)} to avoid printing stars.
 #'
 #' @return The function returns a long string in LaTeX style that can be
 #'     processed in the standard LaTeX tabular environment in order to display
@@ -27,10 +28,21 @@
 show.affinity.matrix = function(res,
                                 labels_x = paste0("Trait ",1:Kx),
                                 labels_y = paste0("Trait ",1:Ky),
-                                pr = 0.05) {
+                                pr = c(0.1, 0.05, 0.01)) {
+
+  # Tests
+  A = res$Aopt; sdA = res$sdA
+  Kx = dim(A)[1]; Ky = dim(A)[2]
+  df.bootstrap = res$df.bootstrap
+  test.A = matrix(FALSE, nrow=Kx*Ky, ncol=length(pr))
+  for (i in 1:length(pr)) {
+    A.CI = matrix(0,nrow=Kx*Ky,ncol=2);
+    for (k in 1:(Kx*Ky)) A.CI[k,] = stats::quantile(df.bootstrap[,k],
+                                                  c(pr[i]/2, 1-pr[i]/2))
+    test.A[,i] = sign(A.CI[,1]*A.CI[,2])==1
+  }
 
   # Prepare table
-  z_stat = stats::qnorm(1-pr/2)
   A = res$Aopt; sdA = res$sdA
   Kx = dim(A)[1]; Ky = dim(A)[2]
   tabular = matrix("", nrow=2*Kx+1, ncol=Ky+1)
@@ -42,18 +54,16 @@ show.affinity.matrix = function(res,
       if (i==1 & j==Ky+1) num = paste0(labels_y[l],"\t\\\\\\hline\n")
       if (i>1 & j==1 & i%%2==0) num = paste0(labels_x[k],"\t&")
       if (i>1 & 1<j & j<Ky+1 & i%%2==0) {
-        if(abs(A[k,l])/sdA[k,l]>z_stat) {
-          num = sprintf("\\textbf{%0.2f}\t&", A[k,l])
-        } else {
-          num = sprintf("%0.2f\t&", A[k,l])
-        }
+        if(test.A[k+(l-1)*Kx,3]) {num = sprintf("$%0.2f^{***}$\t&", A[k,l])
+        } else if(test.A[k+(l-1)*Kx,2]) {num = sprintf("$%0.2f^{**}$\t&", A[k,l])
+        } else if(test.A[k+(l-1)*Kx,1]) {num = sprintf("$%0.2f^{*}$\t&", A[k,l])
+        } else { num = sprintf("$%0.2f$\t&", A[k,l]) }
       }
       if (i>1 & j==Ky+1 & i%%2==0) {
-        if(abs(A[k,l])/sdA[k,l]>z_stat) {
-          num = sprintf("\\textbf{%0.2f}\t\\\\\n", A[k,l])
-        } else {
-          num = sprintf("%0.2f\t\\\\\n", A[k,l])
-        }
+        if(test.A[k+(l-1)*Kx,3]) {num = sprintf("$%0.2f^{***}$\t\\\\\n", A[k,l])
+        } else if(test.A[k+(l-1)*Kx,2]) {num = sprintf("$%0.2f^{**}$\t\\\\\n", A[k,l])
+        } else if(test.A[k+(l-1)*Kx,1]) {num = sprintf("$%0.2f^{*}$\t\\\\\n", A[k,l])
+        } else { num = sprintf("$%0.2f$\t\\\\\n", A[k,l]) }
       }
       if (i>1 & j==1 & i%%2==1) num = "\t&"
       if (i>1 & 1<j & j<Ky+1 & i%%2==1) num = sprintf("(%0.2f) \t&", sdA[k,l])
@@ -80,9 +90,10 @@ show.affinity.matrix = function(res,
 #' @param labels A vector of strings indicating the names of the matching
 #'     variables. Defaults to \code{"Trait k"} for every \code{k} matching
 #'     variable.
-#' @param pr A probability indicating the two-tailed significance level required
-#'     for an estimated parameter to be printed in boldface. Defaults to 0.05
-#'     and can be set to 0 to avoid printing any estimate in boldface.
+#' @param pr A vector of length three indicating the two-tailed significance
+#'     level required to get the corresponding number of stars in the printed
+#'     table. Defaults to \code{c(0.1, 0.05, 0.01)} and can be set to
+#'     \code{c(0, 0, 0)} to avoid printing stars.
 #'
 #' @return The function returns a long string in LaTeX style that can be
 #'     processed in the standard LaTeX tabular environment in order to display
@@ -91,12 +102,22 @@ show.affinity.matrix = function(res,
 #' @export
 show.diagonal = function(res,
                          labels = paste0("Trait ",1:K),
-                         pr = 0.05) {
+                         pr = c(0.1, 0.05, 0.01)) {
+
+  # Tests
+  A = diag(res$Aopt); sdA = diag(res$sdA)\
+  index.diag = diag(matrix(1:length(res$Aopt), ncol=ncol(res$Aopt)))
+  K = length(A)
+  df.bootstrap = res$df.bootstrap
+  test.A = matrix(FALSE, nrow=K, ncol=length(pr))
+  for (i in 1:length(pr)) {
+    A.CI = matrix(0,nrow=K,ncol=2);
+    for (k in 1:K) A.CI[k,] = stats::quantile(df.bootstrap[,index.diag(k)],
+                                              c(pr[i]/2, 1-pr[i]/2))
+    test.A[,i] = sign(A.CI[,1]*A.CI[,2])==1
+  }
 
   # Prepare table
-  z_stat = stats::qnorm(1-pr/2)
-  A = diag(res$Aopt); sdA = diag(res$sdA)
-  K = length(A)
   tabular = matrix("", nrow=3, ncol=K)
   for (i in 1:3) {
     for (j in 1:K) {
@@ -104,11 +125,10 @@ show.diagonal = function(res,
       if (i==1 && j<K) num = paste0(labels[k],"\t&")
       if (i==1 && j==K) num = paste0(labels[k],"\t\\\\\\hline\n")
       if (i==2 && j<K) {
-        if(abs(A[k])/sdA[k]>z_stat) {
-          num = sprintf("\\textbf{%0.2f}\t&", A[k])
-        } else {
-          num = sprintf("%0.2f\t&", A[k])
-        }
+        if(test.A[k,3]) {num = sprintf("$%0.2f^{***}$\t&", A[k])
+        } else if(test.A[k,2]) {num = sprintf("$%0.2f^{**}$\t&", A[k])
+        } else if(test.A[k,1]) {num = sprintf("$%0.2f^{*}$\t&", A[k])
+        } else { num = sprintf("$%0.2f$\t&", A[k]) }
       }
       if (i==2 && j==K) {
         if(abs(A[k])/sdA[k]>z_stat) {
