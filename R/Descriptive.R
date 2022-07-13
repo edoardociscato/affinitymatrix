@@ -321,10 +321,10 @@ show.saliency = function(res,
           num_m = sprintf("$(%0.2f)$\t&", U.sd[k,l])
         }
         if (1<i & i<2*Kx+2 & j==ncol_x & i%%2==0) {
-          if(test.U[k+(l-1)*K,3]) {num_m = sprintf("$%0.2f^{***}$\t\\\\\n&", U[k,l])
-          } else if(test.U[k+(l-1)*K,2]) {num_m = sprintf("$%0.2f^{**}$\t\\\\\n&", U[k,l])
-          } else if(test.U[k+(l-1)*K,1]) {num_m = sprintf("$%0.2f^{*}$\t\\\\\n&", U[k,l])
-          } else { num_m = sprintf("$%0.2f$\t\\\\\n&", U[k,l]) }
+          if(test.U[k+(l-1)*K,3]) {num_m = sprintf("$%0.2f^{***}$\t\\\\\n", U[k,l])
+          } else if(test.U[k+(l-1)*K,2]) {num_m = sprintf("$%0.2f^{**}$\t\\\\\n", U[k,l])
+          } else if(test.U[k+(l-1)*K,1]) {num_m = sprintf("$%0.2f^{*}$\t\\\\\n", U[k,l])
+          } else { num_m = sprintf("$%0.2f$\t\\\\\n", U[k,l]) }
         }
         if (1<i & i<2*Kx+2 & j==ncol_x & i%%2==1) {
           num_m = sprintf("$(%0.2f)$\t\\\\\n", U.sd[k,l])
@@ -362,10 +362,10 @@ show.saliency = function(res,
         num_f = sprintf("$(%0.2f)$\t&", V.sd[k,l])
       }
       if (1<i & i<2*Ky+2 & j==ncol_y & i%%2==0) {
-        if(test.V[k+(l-1)*K,3]) {num_f = sprintf("$%0.2f^{***}$\t\\\\\n&", V[k,l])
-        } else if(test.V[k+(l-1)*K,2]) {num_f = sprintf("$%0.2f^{**}$\t\\\\\n&", V[k,l])
-        } else if(test.V[k+(l-1)*K,1]) {num_f = sprintf("$%0.2f^{*}$\t\\\\\n&", V[k,l])
-        } else { num_f = sprintf("$%0.2f$\t\\\\\n&", V[k,l]) }
+        if(test.V[k+(l-1)*K,3]) {num_f = sprintf("$%0.2f^{***}$\t\\\\\n", V[k,l])
+        } else if(test.V[k+(l-1)*K,2]) {num_f = sprintf("$%0.2f^{**}$\t\\\\\n", V[k,l])
+        } else if(test.V[k+(l-1)*K,1]) {num_f = sprintf("$%0.2f^{*}$\t\\\\\n", V[k,l])
+        } else { num_f = sprintf("$%0.2f$\t\\\\\n", V[k,l]) }
       }
       if (1<i & i<2*Ky+2 & j==ncol_y & i%%2==1) {
         num_f = sprintf("$(%0.2f)$\t\\\\\n", V.sd[k,l])
