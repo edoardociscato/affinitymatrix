@@ -131,11 +131,10 @@ show.diagonal = function(res,
         } else { num = sprintf("$%0.2f$\t&", A[k]) }
       }
       if (i==2 && j==K) {
-        if(abs(A[k])/sdA[k]>z_stat) {
-          num = sprintf("\\textbf{%0.2f}\t\\\\\n", A[k])
-        } else {
-          num = sprintf("%0.2f\t\\\\\n", A[k])
-        }
+        if(test.A[k,3]) {num = sprintf("$%0.2f^{***}$\t\\\\\n", A[k])
+        } else if(test.A[k,2]) {num = sprintf("$%0.2f^{**}$\t\\\\\n", A[k])
+        } else if(test.A[k,1]) {num = sprintf("$%0.2f^{*}$\t\\\\\n", A[k])
+        } else { num = sprintf("$%0.2f$\t\\\\\n", A[k]) }
       }
       if (i==3 && j<K) num = sprintf("(%0.2f)\t&", sdA[k])
       if (i==3 && j==K) num = sprintf("(%0.2f)\t\\\\\n", sdA[k])
