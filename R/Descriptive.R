@@ -51,7 +51,7 @@ show.affinity.matrix = function(res,
       k = i%/%2; l = j-1
       if (i==1 & j==1) num = "\t&"
       if (i==1 & 1<j & j<Ky+1) num = paste0(labels_y[l],"\t&")
-      if (i==1 & j==Ky+1) num = paste0(labels_y[l],"\t\\\\\\hline\n")
+      if (i==1 & j==Ky+1) num = paste0(labels_y[l],"\t\\\\\\midrule\n")
       if (i>1 & j==1 & i%%2==0) num = paste0(labels_x[k],"\t&")
       if (i>1 & 1<j & j<Ky+1 & i%%2==0) {
         if(test.A[k+(l-1)*Kx,3]) {num = sprintf("$%0.2f^{***}$\t&", A[k,l])
@@ -123,7 +123,7 @@ show.diagonal = function(res,
     for (j in 1:K) {
       k = j
       if (i==1 && j<K) num = paste0(labels[k],"\t&")
-      if (i==1 && j==K) num = paste0(labels[k],"\t\\\\\\hline\n")
+      if (i==1 && j==K) num = paste0(labels[k],"\t\\\\\\midrule\n")
       if (i==2 && j<K) {
         if(test.A[k,3]) {num = sprintf("$%0.2f^{***}$\t&", A[k])
         } else if(test.A[k,2]) {num = sprintf("$%0.2f^{**}$\t&", A[k])
@@ -184,7 +184,7 @@ show.test = function(res,
       k = j-1
       if (i==1 && j==1) num = "$H_0$: $rk(A)=k$\t&"
       if (i==1 && 1<j && j<n_tests) num = paste0("$k=",k,"$\t&")
-      if (i==1 && j==n_tests) num = paste0("$k=",k,"$\t\\\\\\hline\n")
+      if (i==1 && j==n_tests) num = paste0("$k=",k,"$\t\\\\\\midrule\n")
       if (i==2 && j==1) num = paste0("$\\chi^2$\t&")
       if (i==2 && 1<j && j<n_tests) num = sprintf("%0.2f\t&",
                                                   res$rank.tests[[k]]$chi2)
@@ -294,7 +294,7 @@ show.saliency = function(res,
         k = i-1; l = j-1
         if (i==1 & j==1) num_m = "\t&"
         if (i==1 & 1<j & j<ncol_x) num_m = paste0("Index ",l,"\t&")
-        if (i==1 & j==ncol_x) num_m = paste0("Index ",l,"\t\\\\\\hline\n")
+        if (i==1 & j==ncol_x) num_m = paste0("Index ",l,"\t\\\\\\midrule\n")
         if (1<i & i<Kx+2 & j==1) num_m = paste0(labels_x[k],"\t&")
         if (1<i & i<Kx+2 & 1<j & j<ncol_x) {
           if(testU[k,l]) {num_m = sprintf("\\textbf{%0.2f}\t&", U[k,l])
@@ -304,7 +304,7 @@ show.saliency = function(res,
           if(testU[k,l]) { num_m = sprintf("\\textbf{%0.2f}\t\\\\\n", U[k,l])
           } else num_m = sprintf("%0.2f\t\\\\\n", U[k,l])
         }
-        if (i==Kx+2 & j==1) num_m = "\\hline Index share\t&"
+        if (i==Kx+2 & j==1) num_m = "\\midrule Index share\t&"
         if (i==Kx+2 & 1<j & j<ncol_x) num_m = sprintf("%0.2f\t&", lambda[l])
         if (i==Kx+2 & j==ncol_x) num_m = sprintf("%0.2f\t\\\\\n", lambda[l])
         tabular_m[i,j] = num_m
@@ -319,7 +319,7 @@ show.saliency = function(res,
       k = i-1; l = j-1
       if (i==1 & j==1) num_f = "\t&"
       if (i==1 & 1<j & j<ncol_y) num_f = paste0("Index ",l,"\t&")
-      if (i==1 & j==ncol_y) num_f = paste0("Index ",l,"\t\\\\\\hline\n")
+      if (i==1 & j==ncol_y) num_f = paste0("Index ",l,"\t\\\\\\midrule\n")
       if (1<i & i<Ky+2 & j==1) num_f = paste0(labels_y[k],"\t&")
       if (1<i & i<Ky+2 & 1<j & j<ncol_y) {
         if(testV[k,l]) { num_f = sprintf("\\textbf{%0.2f}\t&", V[k,l])
@@ -329,7 +329,7 @@ show.saliency = function(res,
         if(testV[k,l]) { num_f = sprintf("\\textbf{%0.2f}\t\\\\\n", V[k,l])
         } else num_f = sprintf("%0.2f\t\\\\\n", V[k,l])
       }
-      if (i==Ky+2 & j==1) num_f = "\\hline Index share\t&"
+      if (i==Ky+2 & j==1) num_f = "\\midrule Index share\t&"
       if (i==Ky+2 & 1<j & j<ncol_y) num_f = sprintf("%0.2f\t&", lambda[l])
       if (i==Ky+2 & j==ncol_y) num_f = sprintf("%0.2f\t\\\\\n", lambda[l])
       tabular_f[i,j] = num_f
@@ -511,7 +511,7 @@ show.correlations = function(res,
       ggplot2::geom_path(data = circle_dat,
                          ggplot2::aes_string(x="xx",y="yy"), color="grey") +
       ggplot2::geom_vline(xintercept = 0, size=.5, color="grey") +
-      ggplot2::geom_hline(yintercept = 0, size=.5, color="grey") +
+      ggplot2::geom_midrule(yintercept = 0, size=.5, color="grey") +
       ggplot2::geom_segment(data = cor[cor$filter,],
                             ggplot2::aes_string(x="origin",y="origin",
                                                 colour="Variable",size="size",
@@ -568,6 +568,6 @@ export.table = function(tabular,
 # Utility function used in the README file
 latex.to.markdown = function(tabular){
 
-  return(gsub("\\}", "***", gsub("\\\\|hline|textbf\\{|\t|&|\n|$", "", tabular)))
+  return(gsub("\\}", "***", gsub("\\\\|midrule|textbf\\{|\t|&|\n|$", "", tabular)))
 
 }
