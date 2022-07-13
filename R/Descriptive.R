@@ -243,9 +243,10 @@ show.test = function(res,
 #' @param labels_y A vector of strings indicating the names of women's matching
 #'     variables. Defaults to \code{"Trait k"} for every \code{k} matching
 #'     variable.
-#' @param pr A probability indicating the two-tailed significance level required
-#'     for an estimated parameter to be printed in boldface. Defaults to 0.05
-#'     and can be set to 0 to avoid printing any estimate in boldface.
+#' @param pr A vector of length three indicating the two-tailed significance
+#'     level required to get the corresponding number of stars in the printed
+#'     table. Defaults to \code{c(0.1, 0.05, 0.01)} and can be set to
+#'     \code{c(0, 0, 0)} to avoid printing stars.
 #'
 #' @return The function returns a long string in LaTeX style that can be
 #'     processed in the standard LaTeX tabular environment in order to display
@@ -259,7 +260,7 @@ show.saliency = function(res,
                          ncol_y = Ky,
                          labels_x = paste0("Trait ",1:Kx),
                          labels_y = paste0("Trait ",1:Ky),
-                         pr = .05) {
+                         pr = c(0.1, 0.05, 0.01)) {
 
     # Normalize s.t. largest weight in every column (in absolut terms) is positive
     lambda = res$lambda/sum(res$lambda);
@@ -273,18 +274,19 @@ show.saliency = function(res,
 
     # Confidence intervals
     df.bootstrap = res$df.bootstrap
-    lambdaCI = matrix(0,nrow=K,ncol=2);
-    for (k in 1:K) lambdaCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+k],
-                                                  c(pr/2, 1-pr/2))
-    UCI = matrix(0,nrow=Kx*K,ncol=2);
-    for (k in 1:(Kx*K)) UCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+k],
-                                                  c(pr/2, 1-pr/2))
-    VCI = matrix(0,nrow=Ky*K,ncol=2);
-    for (k in 1:(Ky*K)) VCI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+Kx*K+k],
-                                                  c(pr/2, 1-pr/2))
-    Ulb = matrix(UCI[,1],nrow=Kx); Uub = matrix(UCI[,2],nrow=Kx)
-    Vlb = matrix(VCI[,1],nrow=Ky); Vub = matrix(VCI[,2],nrow=Ky)
-    testU = sign(Ulb*Uub)==1; testV = sign(Vlb*Vub)==1
+    test.lambda = matrix(FALSE, nrow=K, ncol=length(pr))
+    test.U = matrix(FALSE, nrow=Kx*K, ncol=length(pr))
+    test.V = matrix(FALSE, nrow=Ky*K, ncol=length(pr))
+    for (i in 1:length(pr)) {
+      U.CI = matrix(0,nrow=Kx*K,ncol=2);
+      for (k in 1:(Kx*K)) U.CI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+k],
+                                                    c(pr[i]/2, 1-pr[i]/2))
+      V.CI = matrix(0,nrow=Ky*K,ncol=2);
+      for (k in 1:(Ky*K)) V.CI[k,] = stats::quantile(df.bootstrap[,Kx*Ky+K+Kx*K+k],
+                                                     c(pr[i]/2, 1-pr[i]/2))
+      test.U[,i] = sign(U.CI[,1]*U.CI[,2])==1
+      test.V[,i] = sign(V.CI[,1]*V.CI[,2])==1
+    }
 
     # Prepare table (men)
     ncol_x = min(ncol_x+1, K+1)
@@ -297,12 +299,16 @@ show.saliency = function(res,
         if (i==1 & j==ncol_x) num_m = paste0("Index ",l,"\t\\\\\\midrule\n")
         if (1<i & i<Kx+2 & j==1) num_m = paste0(labels_x[k],"\t&")
         if (1<i & i<Kx+2 & 1<j & j<ncol_x) {
-          if(testU[k,l]) {num_m = sprintf("\\textbf{%0.2f}\t&", U[k,l])
-          } else num_m = sprintf("%0.2f\t&", U[k,l])
+          if(test.U[k+(l-1)*K,3]) {num_m = sprintf("$%0.2f^{***}$\t&", U[k,l])
+          } else if(test.U[k+(l-1)*K,2]) {num_m = sprintf("$%0.2f^{**}$\t&", U[k,l])
+          } else if(test.U[k+(l-1)*K,1]) {num_m = sprintf("$%0.2f^{*}$\t&", U[k,l])
+          } else { num_m = sprintf("$%0.2f$\t&", U[k,l]) }
         }
         if (1<i & i<Kx+2 & j==ncol_x) {
-          if(testU[k,l]) { num_m = sprintf("\\textbf{%0.2f}\t\\\\\n", U[k,l])
-          } else num_m = sprintf("%0.2f\t\\\\\n", U[k,l])
+          if(test.U[k+(l-1)*K,3]) {num_m = sprintf("$%0.2f^{***}$\t\\\\\n&", U[k,l])
+          } else if(test.U[k+(l-1)*K,2]) {num_m = sprintf("$%0.2f^{**}$\t\\\\\n&", U[k,l])
+          } else if(test.U[k+(l-1)*K,1]) {num_m = sprintf("$%0.2f^{*}$\t\\\\\n&", U[k,l])
+          } else { num_m = sprintf("$%0.2f$\t\\\\\n&", U[k,l]) }
         }
         if (i==Kx+2 & j==1) num_m = "\\midrule Index share\t&"
         if (i==Kx+2 & 1<j & j<ncol_x) num_m = sprintf("%0.2f\t&", lambda[l])
@@ -322,12 +328,16 @@ show.saliency = function(res,
       if (i==1 & j==ncol_y) num_f = paste0("Index ",l,"\t\\\\\\midrule\n")
       if (1<i & i<Ky+2 & j==1) num_f = paste0(labels_y[k],"\t&")
       if (1<i & i<Ky+2 & 1<j & j<ncol_y) {
-        if(testV[k,l]) { num_f = sprintf("\\textbf{%0.2f}\t&", V[k,l])
-        } else num_f = sprintf("%0.2f\t&", V[k,l])
+        if(test.V[k+(l-1)*K,3]) {num_f = sprintf("$%0.2f^{***}$\t&", V[k,l])
+        } else if(test.V[k+(l-1)*K,2]) {num_f = sprintf("$%0.2f^{**}$\t&", V[k,l])
+        } else if(test.V[k+(l-1)*K,1]) {num_f = sprintf("$%0.2f^{*}$\t&", V[k,l])
+        } else { num_f = sprintf("$%0.2f$\t&", V[k,l]) }
       }
       if (1<i & i<Ky+2 & j==ncol_y) {
-        if(testV[k,l]) { num_f = sprintf("\\textbf{%0.2f}\t\\\\\n", V[k,l])
-        } else num_f = sprintf("%0.2f\t\\\\\n", V[k,l])
+        if(test.V[k+(l-1)*K,3]) {num_f = sprintf("$%0.2f^{***}$\t\\\\\n&", V[k,l])
+        } else if(test.V[k+(l-1)*K,2]) {num_f = sprintf("$%0.2f^{**}$\t\\\\\n&", V[k,l])
+        } else if(test.V[k+(l-1)*K,1]) {num_f = sprintf("$%0.2f^{*}$\t\\\\\n&", V[k,l])
+        } else { num_f = sprintf("$%0.2f$\t\\\\\n&", V[k,l]) }
       }
       if (i==Ky+2 & j==1) num_f = "\\midrule Index share\t&"
       if (i==Ky+2 & 1<j & j<ncol_y) num_f = sprintf("%0.2f\t&", lambda[l])
