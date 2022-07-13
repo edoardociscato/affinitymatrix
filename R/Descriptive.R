@@ -288,60 +288,94 @@ show.saliency = function(res,
       test.V[,i] = sign(V.CI[,1]*V.CI[,2])==1
     }
 
+    # Standard errors
+    lambda.sd = rep(0,nrow=K);
+    U.sd = rep(0,Kx*K)
+    V.sd = rep(0,Ky*K)
+    for (k in 1:K) lambda.sd[k] = stats::sd(df.bootstrap[,Kx*Ky+k])/sum(res$lambda)
+    for (k in 1:(Kx*K)) U.sd[k] = stats::sd(df.bootstrap[,Kx*Ky+K+k])
+    for (k in 1:(Ky*K)) V.sd[k] = stats::sd(df.bootstrap[,Kx*Ky+K+Kx*K+k])
+    U.sd = matrix(U.sd, nrow=Kx, ncol=K)
+    V.sd = matrix(V.sd, nrow=Ky, ncol=K)
+
     # Prepare table (men)
     ncol_x = min(ncol_x+1, K+1)
-    tabular_m = matrix("", nrow=Kx+2, ncol=ncol_x)
-    for (i in 1:(Kx+2)) {
+    tabular_m = matrix("", nrow=2*Kx+3, ncol=ncol_x)
+    for (i in 1:(2*Kx+3)) {
       for (j in 1:ncol_x) {
-        k = i-1; l = j-1
+        k = ceiling((i-1)/2); l = j-1
         if (i==1 & j==1) num_m = "\t&"
         if (i==1 & 1<j & j<ncol_x) num_m = paste0("Index ",l,"\t&")
         if (i==1 & j==ncol_x) num_m = paste0("Index ",l,"\t\\\\\\midrule\n")
-        if (1<i & i<Kx+2 & j==1) num_m = paste0(labels_x[k],"\t&")
-        if (1<i & i<Kx+2 & 1<j & j<ncol_x) {
+        if (1<i & i<2*Kx+2 & j==1) {
+          if (i%%2==0) num_m = paste0(labels_x[k],"\t&")
+          if (i%%2==1) num_m = "\t&"
+        }
+        if (1<i & i<2*Kx+2 & 1<j & j<ncol_x & i%%2==0) {
           if(test.U[k+(l-1)*K,3]) {num_m = sprintf("$%0.2f^{***}$\t&", U[k,l])
           } else if(test.U[k+(l-1)*K,2]) {num_m = sprintf("$%0.2f^{**}$\t&", U[k,l])
           } else if(test.U[k+(l-1)*K,1]) {num_m = sprintf("$%0.2f^{*}$\t&", U[k,l])
           } else { num_m = sprintf("$%0.2f$\t&", U[k,l]) }
         }
-        if (1<i & i<Kx+2 & j==ncol_x) {
+        if (1<i & i<2*Kx+2 & 1<j & j<ncol_x & i%%2==1) {
+          num_m = sprintf("$(%0.2f)$\t&", U.sd[k,l])
+        }
+        if (1<i & i<2*Kx+2 & j==ncol_x & i%%2==0) {
           if(test.U[k+(l-1)*K,3]) {num_m = sprintf("$%0.2f^{***}$\t\\\\\n&", U[k,l])
           } else if(test.U[k+(l-1)*K,2]) {num_m = sprintf("$%0.2f^{**}$\t\\\\\n&", U[k,l])
           } else if(test.U[k+(l-1)*K,1]) {num_m = sprintf("$%0.2f^{*}$\t\\\\\n&", U[k,l])
           } else { num_m = sprintf("$%0.2f$\t\\\\\n&", U[k,l]) }
         }
-        if (i==Kx+2 & j==1) num_m = "\\midrule Index share\t&"
-        if (i==Kx+2 & 1<j & j<ncol_x) num_m = sprintf("%0.2f\t&", lambda[l])
-        if (i==Kx+2 & j==ncol_x) num_m = sprintf("%0.2f\t\\\\\n", lambda[l])
+        if (1<i & i<2*Kx+2 & j==ncol_x & i%%2==1) {
+          num_m = sprintf("$(%0.2f)$\t\\\\\n", U.sd[k,l])
+        }
+        if (i==2*Kx+2 & j==1) num_m = "\\midrule Index share\t&"
+        if (i==2*Kx+2 & 1<j & j<ncol_x) num_m = sprintf("$%0.2f$\t&", lambda[l])
+        if (i==2*Kx+2 & j==ncol_x) num_m = sprintf("$%0.2f$\t\\\\\n", lambda[l])
+        if (i==2*Kx+3 & j==1) num_m = "\t&"
+        if (i==2*Kx+3 & 1<j & j<ncol_x) num_m = sprintf("$(%0.2f)$\t&", lambda.sd[l])
+        if (i==2*Kx+3 & j==ncol_x) num_m = sprintf("$(%0.2f)$\t\\\\\n", lambda.sd[l])
         tabular_m[i,j] = num_m
     }
   }
 
   # Prepare table (women)
   ncol_y = min(ncol_y+1, K+1)
-  tabular_f = matrix("", nrow=Ky+2, ncol=ncol_y)
-  for (i in 1:(Ky+2)) {
+  tabular_f = matrix("", nrow=2*Ky+3, ncol=ncol_y)
+  for (i in 1:(2*Ky+3)) {
     for (j in 1:ncol_y) {
-      k = i-1; l = j-1
+      k = ceiling((i-1)/2); l = j-1
       if (i==1 & j==1) num_f = "\t&"
       if (i==1 & 1<j & j<ncol_y) num_f = paste0("Index ",l,"\t&")
       if (i==1 & j==ncol_y) num_f = paste0("Index ",l,"\t\\\\\\midrule\n")
-      if (1<i & i<Ky+2 & j==1) num_f = paste0(labels_y[k],"\t&")
-      if (1<i & i<Ky+2 & 1<j & j<ncol_y) {
+      if (1<i & i<2*Ky+2 & j==1) {
+        if (i%%2==0) num_f = paste0(labels_y[k],"\t&")
+        if (i%%2==1) num_f = "\t&"
+      }
+      if (1<i & i<2*Ky+2 & 1<j & j<ncol_y & i%%2==0) {
         if(test.V[k+(l-1)*K,3]) {num_f = sprintf("$%0.2f^{***}$\t&", V[k,l])
         } else if(test.V[k+(l-1)*K,2]) {num_f = sprintf("$%0.2f^{**}$\t&", V[k,l])
         } else if(test.V[k+(l-1)*K,1]) {num_f = sprintf("$%0.2f^{*}$\t&", V[k,l])
         } else { num_f = sprintf("$%0.2f$\t&", V[k,l]) }
       }
-      if (1<i & i<Ky+2 & j==ncol_y) {
+      if (1<i & i<2*Ky+2 & 1<j & j<ncol_y & i%%2==1) {
+        num_f = sprintf("$(%0.2f)$\t&", V.sd[k,l])
+      }
+      if (1<i & i<2*Ky+2 & j==ncol_y & i%%2==0) {
         if(test.V[k+(l-1)*K,3]) {num_f = sprintf("$%0.2f^{***}$\t\\\\\n&", V[k,l])
         } else if(test.V[k+(l-1)*K,2]) {num_f = sprintf("$%0.2f^{**}$\t\\\\\n&", V[k,l])
         } else if(test.V[k+(l-1)*K,1]) {num_f = sprintf("$%0.2f^{*}$\t\\\\\n&", V[k,l])
         } else { num_f = sprintf("$%0.2f$\t\\\\\n&", V[k,l]) }
       }
-      if (i==Ky+2 & j==1) num_f = "\\midrule Index share\t&"
-      if (i==Ky+2 & 1<j & j<ncol_y) num_f = sprintf("%0.2f\t&", lambda[l])
-      if (i==Ky+2 & j==ncol_y) num_f = sprintf("%0.2f\t\\\\\n", lambda[l])
+      if (1<i & i<2*Ky+2 & j==ncol_y & i%%2==1) {
+        num_f = sprintf("$(%0.2f)$\t\\\\\n", V.sd[k,l])
+      }
+      if (i==2*Ky+2 & j==1) num_f = "\\midrule Index share\t&"
+      if (i==2*Ky+2 & 1<j & j<ncol_y) num_f = sprintf("$%0.2f$\t&", lambda[l])
+      if (i==2*Ky+2 & j==ncol_y) num_f = sprintf("$%0.2f$\t\\\\\n", lambda[l])
+      if (i==2*Ky+3 & j==1) num_f = "\t&"
+      if (i==2*Ky+3 & 1<j & j<ncol_y) num_f = sprintf("$(%0.2f)$\t&", lambda.sd[l])
+      if (i==2*Ky+3 & j==ncol_y) num_f = sprintf("$(%0.2f)$\t\\\\\n", lambda.sd[l])
       tabular_f[i,j] = num_f
     }
   }
