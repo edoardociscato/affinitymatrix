@@ -18,10 +18,9 @@
 #'     as \code{\link{show.correlations}}, it is recommended assigning the same
 #'     matching variable to the k-th column of \code{X} and to the k-th column
 #'     of \code{Y}, whenever possible. If \code{X} has more matching variables
-#'     than \code{Y}, then those variables that appear in \code{X} but no in {Y}
-#'     should be found in the last columns of \code{X} (and vice versa). The
-#'     matrix is demeaned and rescaled before the start of the estimation
-#'     algorithm.
+#'     than \code{Y}, then those variables should be found in the last columns
+#'     of \code{X} (and vice versa). The matrix is demeaned and rescaled before
+#'     the start of the estimation algorithm.
 #' @param Y The matrix of women's traits. Its rows must be ordered so that the
 #'     i-th woman is matched with the i-th man: this means that \code{nrow(Y)}
 #'     must be equal to \code{nrow(X)}.  Its columns correspond to the different
@@ -246,12 +245,12 @@ piopt <- function(Kxy, fx, fy) {
 }
 
 # Function to rescale data
-rescale.data <- function(X, Xref = X) {
+rescale.data <- function(X, X.ref = X) {
 
   X = as.matrix(X)
   N = nrow(X); K = ncol(X)
-  mX = colMeans(Xref, dims=1, na.rm=TRUE)
-  scaleX = sqrt(diag(stats::cov(Xref, use="pairwise.complete.obs")))
+  mX = colMeans(X.ref, dims=1, na.rm=TRUE)
+  scaleX = sqrt(diag(stats::cov(X.ref, use="pairwise.complete.obs")))
   for (k in 1:K) X[,k] = (X[,k] - mX[k])/scaleX[k]
 
   return(X)

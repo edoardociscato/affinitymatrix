@@ -264,11 +264,11 @@ show.saliency = function(res,
 
     # Normalize s.t. largest weight in every column (in absolut terms) is positive
     lambda = res$lambda/sum(res$lambda);
-    U = res$U; V = res$V; K = length(lambda)
+    U = res$U; V = res$V; ; UV = rbind(U, V); K = length(lambda)
     Kx = nrow(U); Ky = nrow(V)
-    change_sign_x = kronecker(t(apply(U,2,function(x) sign(x[which.max(abs(x))]))),
+    change_sign_x = kronecker(t(apply(UV,2,function(x) sign(x[which.max(abs(x))]))),
                               matrix(1,nrow=Kx,ncol=1)) # must be the same for both sides
-    change_sign_y = kronecker(t(apply(U,2,function(x) sign(x[which.max(abs(x))]))),
+    change_sign_y = kronecker(t(apply(UV,2,function(x) sign(x[which.max(abs(x))]))),
                               matrix(1,nrow=Ky,ncol=1))
     U = change_sign_x*U; V = change_sign_y*V
 
@@ -504,13 +504,13 @@ show.correlations = function(res,
   X = res$X; Y = res$Y; N = nrow(X)
   Kx = ncol(X); Ky = ncol(Y);
   Z = as.matrix(Z); Kz = ncol(Z)
-  U = res$U; V = res$V
+  U = res$U; V = res$V; UV = rbind(U, V)
   if (Kx>=Ky) {
-    change_sign_x = kronecker(t(apply(U,2,function(x) sign(x[which.max(abs(x))]))),
+    change_sign_x = kronecker(t(apply(UV,2,function(x) sign(x[which.max(abs(x))]))),
                               matrix(1,nrow=Kx,ncol=1)) # must be the same for both sides
     change_sign_y = change_sign_x[1:Ky,1:Ky]
   } else {
-    change_sign_y = kronecker(t(apply(V,2,function(x) sign(x[which.max(abs(x))]))),
+    change_sign_y = kronecker(t(apply(UV,2,function(x) sign(x[which.max(abs(x))]))),
                               matrix(1,nrow=Ky,ncol=1)) # must be the same for both sides
     change_sign_x = change_sign_y[1:Kx,1:Kx]
   }
